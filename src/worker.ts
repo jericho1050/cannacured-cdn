@@ -1,6 +1,7 @@
 import { Server } from 'hyper-express';
 import redis from 'redis';
 import { tempFileMiddleware } from './tempFile.middleware';
+import { validGroupIdCheckMiddleware } from './validGroupIdCheck.middleware';
 
 
 const redisClient = redis.createClient({});
@@ -10,32 +11,14 @@ const server = new Server({
 });
 
 
-let numbers = "0123456789";
-function isValidGroupId(groupId?: string) {
-  if (!groupId) {
-    return false;
-  }
 
-  for (let i = 0; i < groupId.length; i++) {
-    if (!numbers.includes(groupId[i]!)) {
-      return false;
-    }
-  }
-
-  return true;
-}
 
 
 // groupId can:
 // - be a userId for posts
 // - channelId for messages
-server.post("/:groupId", tempFileMiddleware, async (req, res) => {
-  if (!isValidGroupId(req.params.groupId)) {
-    res.status(400).json({
-      error: "Invalid groupId"
-    })
-    return;
-  }
+server.post("/:groupId", validGroupIdCheckMiddleware, tempFileMiddleware, async (req, res) => {
+
 
 
 
