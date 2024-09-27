@@ -9,7 +9,7 @@ import { Request, Response } from "hyper-express";
 import { config } from "../config";
 
 export function handleBannersPostRoute(server: Server) {
-  server.post("/banners/:groupId", validGroupIdCheckMiddleware, tempFileMiddleware, route, { max_body_length: config.bannerMaxBodyLength })
+  server.post("/banners/:groupId", validGroupIdCheckMiddleware, tempFileMiddleware({ image: true }), route, { max_body_length: config.bannerMaxBodyLength })
 }
 
 const route = async (req: Request, res: Response) => {

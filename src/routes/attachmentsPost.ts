@@ -9,7 +9,7 @@ import { Request, Response } from "hyper-express";
 import { config } from "../config";
 
 export function handleAttachmentsPostRoute(server: Server) {
-  server.post("/attachments/:groupId", validGroupIdCheckMiddleware, tempFileMiddleware, route, { max_body_length: config.attachmentMaxBodyLength })
+  server.post("/attachments/:groupId", validGroupIdCheckMiddleware, tempFileMiddleware(), route, { max_body_length: config.attachmentMaxBodyLength })
 }
 
 const route = async (req: Request, res: Response) => {

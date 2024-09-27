@@ -9,7 +9,7 @@ import { Request, Response } from "hyper-express";
 import { config } from "../config";
 
 export function handleAvatarsPostRoute(server: Server) {
-  server.post("/avatars/:groupId", validGroupIdCheckMiddleware, tempFileMiddleware, route, { max_body_length: config.avatarMaxBodyLength })
+  server.post("/avatars/:groupId", validGroupIdCheckMiddleware, tempFileMiddleware({ image: true }), route, { max_body_length: config.avatarMaxBodyLength })
 }
 
 const route = async (req: Request, res: Response) => {
