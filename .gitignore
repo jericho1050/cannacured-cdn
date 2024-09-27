@@ -3,3 +3,5 @@ dist
 src/config.ts
 public
 temp
+prisma/dev.db-journal
+prisma/dev.db

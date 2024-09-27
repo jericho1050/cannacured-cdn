@@ -2,7 +2,7 @@ import { Request, Response, MiddlewareNext, Server } from 'hyper-express';
 
 
 let numbers = "0123456789";
-function isValidGroupId(groupId?: string) {
+export function isValidGroupId(groupId?: string) {
   if (!groupId) {
     return false;
   }
