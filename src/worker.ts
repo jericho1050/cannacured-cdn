@@ -1,8 +1,8 @@
 import { Server } from 'hyper-express';
-import { tempFileMiddleware } from './tempFile.middleware';
-import { isValidGroupId, validGroupIdCheckMiddleware } from './validGroupIdCheck.middleware';
+import { tempFileMiddleware } from './middlewares/tempFile.middleware';
+import { isValidGroupId, validGroupIdCheckMiddleware } from './middlewares/validGroupIdCheck.middleware';
 import { addToWaitingList, findAndDeleteWaitingVerification, VerificationType } from './VerificationService';
-import { attachmentsDirPath, avatarsDirPath, bannersDirPath, tempDirPath } from './Folders';
+import { attachmentsDirPath, avatarsDirPath, bannersDirPath, tempDirPath } from './utils/Folders';
 import path, { ParsedPath } from 'path';
 import { WaitingVerification } from '@prisma/client';
 import fs from 'fs';

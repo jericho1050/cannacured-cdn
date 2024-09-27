@@ -1,6 +1,6 @@
 import path from "path";
 import { prisma } from "./db"
-import { tempDirPath } from "./Folders";
+import { tempDirPath } from "./utils/Folders";
 
 export enum VerificationType {
   ATTACHMENT = "ATTACHMENT",

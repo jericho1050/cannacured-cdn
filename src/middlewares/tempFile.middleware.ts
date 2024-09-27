@@ -1,8 +1,8 @@
 import { Request, Response, MiddlewareNext, Server } from 'hyper-express';
 import fs from 'fs';
-import { generateId } from './flake';
+import { generateId } from '../utils/flake';
 import path from 'path';
-import { tempDirPath } from './Folders';
+import { tempDirPath } from '../utils/Folders';
 import { pipeline } from 'stream/promises';
 
 export const tempFileMiddleware = async (req: Request, res: Response) => {
