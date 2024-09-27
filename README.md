@@ -1,1 +1,1 @@
-WIP cdn that will have support temporary file uploads
+WIP cdn that will support temporary file uploads
