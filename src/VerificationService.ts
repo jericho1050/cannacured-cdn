@@ -55,11 +55,12 @@ export const removeExpiredVerifications = async () => {
   return results;
 }
 
-export const findAndDeleteWaitingVerification = async (fileId: string, groupId: string) => {
+export const findAndDeleteWaitingVerification = async (fileId: string, groupId: string, type: VerificationType) => {
   return prisma.waitingVerification.delete({
     where: {
       id: fileId,
-      groupId
+      groupId,
+      type,
     }
   }).catch(() => undefined)
 }

@@ -54,6 +54,13 @@ server.post("/attachments/:groupId", validGroupIdCheckMiddleware, tempFileMiddle
 server.post("/verify/:groupId/:fileId", async (req, res) => {
   const groupId = req.params.groupId as string;
   const fileId = req.params.fileId as string;
+  const type = req.query.type as VerificationType;
+  if (!type) {
+    res.status(400).json({
+      error: "Missing type query parameter"
+    })
+    return;
+  }
 
   if (!isValidGroupId(groupId) || !isValidGroupId(fileId)) {
     res.status(400).json({
@@ -62,7 +69,7 @@ server.post("/verify/:groupId/:fileId", async (req, res) => {
     return;
   }
 
-  const waitingVerification = await findAndDeleteWaitingVerification(fileId, groupId);
+  const waitingVerification = await findAndDeleteWaitingVerification(fileId, groupId, type);
   if (!waitingVerification) {
     res.status(404).json({
       error: "Not found"
