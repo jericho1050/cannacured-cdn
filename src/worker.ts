@@ -8,12 +8,13 @@ import { WaitingVerification } from '@prisma/client';
 import fs from 'fs';
 
 
+// max_body_length [Number]: Maximum number of bytes allowed for incoming request body size. For reference, 1kb = 1024 Bytes and 1mb = 1024kb.
+const maxBodyLength = 50 * 1024 * 1024
+const server = new Server();
 
-const server = new Server({
-  max_body_length: 10333 * 1024 * 1024,
-});
-
-
+server.set_error_handler((err, req, res) => {
+  console.error(err)
+})
 
 
 
@@ -48,7 +49,7 @@ server.post("/attachments/:groupId", validGroupIdCheckMiddleware, tempFileMiddle
   res.status(200).json({
     fileId: req.file.fileId
   })
-})
+}, { max_body_length: maxBodyLength })
 
 
 server.post("/verify/:groupId/:fileId", async (req, res) => {
