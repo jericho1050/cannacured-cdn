@@ -1,7 +1,11 @@
-import { Request, Response, MiddlewareNext, Server } from 'hyper-express';
+import { Request, Response } from 'hyper-express';
 
 
 let numbers = "0123456789";
+
+// groupId can:
+// - be a userId for posts/avatars/banners
+// - channelId for messages
 export function isValidGroupId(groupId?: string) {
   if (!groupId) {
     return false;
