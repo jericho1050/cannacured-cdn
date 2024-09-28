@@ -5,13 +5,14 @@ import { removeExpiredVerifications } from "./VerificationService";
 import { setTimeout } from "timers/promises";
 import path from "path";
 import fs from "fs";
+import { config } from "./config";
 
-const cpus = os.cpus();
+const cpus = config.devMode ? 1 : os.cpus().length;
 
 if (cluster.isPrimary) {
   createFolders();
   removeExpiredVerificationsAtInterval();
-  for (let i = 0; i < cpus.length; i++) {
+  for (let i = 0; i < cpus; i++) {
     cluster.fork({
       cpu: i,
     });

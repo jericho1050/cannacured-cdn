@@ -6,37 +6,7 @@ import { tempDirPath } from "../utils/Folders";
 import { pipeline } from "stream/promises";
 
 
-import { Transform, TransformOptions } from 'stream';
 
-class ThrottleTransform extends Transform {
-  buffer: Buffer[];
-  throttleInterval: number;
-  throttling: boolean;
-  constructor(options: TransformOptions & { throttleInterval?: number }) {
-    super(options);
-    this.buffer = [];
-    this.throttleInterval = options.throttleInterval || 100; // Adjust the interval as needed
-    this.throttling = false;
-  }
-
-  _transform(chunk: Buffer, enc: BufferEncoding, cb: () => void) {
-    this.buffer.push(chunk);
-
-    if (!this.throttling) {
-      this.throttling = true;
-      setTimeout(() => {
-        while (this.buffer.length > 0) {
-          const chunk = this.buffer.shift();
-          this.push(chunk);
-        }
-        this.throttling = false;
-        cb();
-      }, this.throttleInterval);
-    } else {
-      cb();
-    }
-  }
-}
 
 
 
@@ -68,12 +38,12 @@ export const tempFileMiddleware = (opts?: { image?: boolean }) => {
           return;
         }
 
-        const throttleTransform = new ThrottleTransform({
-          throttleInterval: 400,
-
-        })
+        // Use this to rate limit.
+        // limit_rate_after 500k;
+        // or limit_rate 20k;
+        // https://www.tecmint.com/nginx-bandwidth-limit/#:~:text=a%20location%20block%E2%80%9D.-,limit_rate_after%20500k%3B,-Here%20is%20an
         writeStream = fs.createWriteStream(tempPath);
-        const status = await pipeline(field.file.stream, throttleTransform, writeStream).catch(
+        const status = await pipeline(field.file.stream, writeStream).catch(
           () => null
         );
         if (status === null) {
