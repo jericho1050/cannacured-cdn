@@ -1,15 +1,16 @@
-import { DefaultRequestLocals } from 'hyper-express';
+import { DefaultRequestLocals } from "hyper-express";
 
-declare module 'hyper-express' {
+declare module "hyper-express" {
   interface Request<T = DefaultRequestLocals> {
     file?: {
       originalFilename: string;
       fileId: string;
       tempFilename: string;
       mimetype: string;
-      fileSize: number;
+      filesize: number;
       shouldCompress: boolean;
       compressedFilename?: string;
-    }
+      animated: boolean;
+    };
   }
 }

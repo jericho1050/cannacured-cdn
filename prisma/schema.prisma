@@ -19,6 +19,9 @@ model WaitingVerification {
 
   tempFilename      String
   originalFilename  String
+  filesize          Int
+  mimetype          String
+  animated          Boolean
 
   type               String
 

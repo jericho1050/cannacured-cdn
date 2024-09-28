@@ -14,9 +14,9 @@ export const tempFileMiddleware = (opts?: { image?: boolean }) => {
       if (res.statusCode && res.statusCode < 400) return;
 
       if (writeStream) {
-        fs.promises.unlink(writeStream.path).catch(() => { });
+        fs.promises.unlink(writeStream.path).catch(() => {});
         if (req.file?.compressedFilename) {
-          fs.promises.unlink(req.file.compressedFilename).catch(() => { });
+          fs.promises.unlink(req.file.compressedFilename).catch(() => {});
         }
       }
     });
@@ -34,7 +34,7 @@ export const tempFileMiddleware = (opts?: { image?: boolean }) => {
             res.status(400).json({
               error: "Invalid image mime type",
             });
-          })
+          });
           return;
         }
 
@@ -53,14 +53,15 @@ export const tempFileMiddleware = (opts?: { image?: boolean }) => {
           return;
         }
 
-        const fileSize = (await fs.promises.stat(tempPath)).size;
+        const filesize = (await fs.promises.stat(tempPath)).size;
         req.file = {
           tempFilename,
           fileId,
           originalFilename: safeFilename(field.file.name),
           mimetype: field.mime_type,
-          fileSize,
-          shouldCompress: isImage && fileSize <= config.imageMaxBodyLength,
+          animated: false,
+          filesize,
+          shouldCompress: isImage && filesize <= config.imageMaxBodyLength,
         };
       })
       .catch((error) => {
@@ -74,7 +75,7 @@ export const tempFileMiddleware = (opts?: { image?: boolean }) => {
             .send("There should be no fields in the request.");
         } else {
           const text = typeof error === "string" ? error : "";
-          console.log(error)
+          console.log(error);
           return res
             .status(500)
             .send("Oops! An uncaught error occurred on our end. " + text);
