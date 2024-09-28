@@ -4,9 +4,22 @@ import { validGroupIdCheckMiddleware } from "../middlewares/validGroupIdCheck.mi
 import { addToWaitingList, VerificationType } from "../VerificationService";
 import { Request, Response } from "hyper-express";
 import { config } from "../config";
+import { compressImage, removeFile } from "../utils/imageMagick";
+import path from "path";
+import { tempDirPath } from "../utils/Folders";
+import { compressImageMiddleware } from "../middlewares/compressImage.middleware";
 
 export function handleAttachmentsPostRoute(server: Server) {
-  server.post("/attachments/:groupId", validGroupIdCheckMiddleware, tempFileMiddleware(), route, { max_body_length: config.attachmentMaxBodyLength })
+  server.post("/attachments/:groupId",
+    validGroupIdCheckMiddleware,
+    tempFileMiddleware(),
+    compressImageMiddleware({
+      newPath: tempDirPath,
+      size: [1920, 1080, "fit"]
+    }),
+    route,
+    { max_body_length: config.attachmentMaxBodyLength }
+  )
 }
 
 const route = async (req: Request, res: Response) => {
@@ -17,6 +30,10 @@ const route = async (req: Request, res: Response) => {
     return;
   }
 
+
+
+
+  console.log(req.file)
   const result = await addToWaitingList({
     fileId: req.file.fileId,
     groupId: req.params.groupId as string,

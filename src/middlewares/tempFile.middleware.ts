@@ -1,9 +1,11 @@
 import { Request, Response, MiddlewareNext, Server } from "hyper-express";
-import fs, { WriteStream } from "fs";
+import fs, { stat, WriteStream } from "fs";
 import { generateId } from "../utils/flake";
 import path from "path";
 import { tempDirPath } from "../utils/Folders";
 import { pipeline } from "stream/promises";
+import { bytesToMb } from "../utils/bytes";
+import { config } from "../config";
 
 export const tempFileMiddleware = (opts?: { image?: boolean }) => {
   return async (req: Request, res: Response) => {
@@ -13,6 +15,9 @@ export const tempFileMiddleware = (opts?: { image?: boolean }) => {
 
       if (writeStream) {
         fs.promises.unlink(writeStream.path).catch(() => { });
+        if (req.file?.compressedFilename) {
+          fs.promises.unlink(req.file.compressedFilename).catch(() => { });
+        }
       }
     });
 
@@ -47,11 +52,15 @@ export const tempFileMiddleware = (opts?: { image?: boolean }) => {
           });
           return;
         }
+
+        const fileSize = (await fs.promises.stat(tempPath)).size;
         req.file = {
           tempFilename,
           fileId,
           originalFilename: safeFilename(field.file.name),
           mimetype: field.mime_type,
+          fileSize,
+          shouldCompress: isImage && fileSize <= config.imageMaxBodyLength,
         };
       })
       .catch((error) => {
@@ -85,6 +94,7 @@ function isImageMime(mime: string) {
   if (SupportedImages.includes(mime)) {
     return true;
   }
+  return false;
 }
 
 export function safeFilename(filename?: string) {

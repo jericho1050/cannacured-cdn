@@ -6,7 +6,7 @@ import { Request, Response } from "hyper-express";
 import { config } from "../config";
 
 export function handleEmojisPostRoute(server: Server) {
-  server.post("/emojis/:groupId", validGroupIdCheckMiddleware, tempFileMiddleware({ image: true }), route, { max_body_length: config.bannerMaxBodyLength })
+  server.post("/emojis/:groupId", validGroupIdCheckMiddleware, tempFileMiddleware({ image: true }), route, { max_body_length: config.imageMaxBodyLength })
 }
 
 const route = async (req: Request, res: Response) => {

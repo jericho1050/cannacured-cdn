@@ -7,6 +7,9 @@ declare module 'hyper-express' {
       fileId: string;
       tempFilename: string;
       mimetype: string;
+      fileSize: number;
+      shouldCompress: boolean;
+      compressedFilename?: string;
     }
   }
 }
