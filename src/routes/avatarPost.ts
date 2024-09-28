@@ -12,7 +12,7 @@ export function handleAvatarsPostRoute(server: Server) {
     validGroupIdCheckMiddleware,
     tempFileMiddleware({ image: true }),
     compressImageMiddleware({
-      size: [200, 200, "fit"],
+      size: [200, 200, "fill"],
       allowCrop: true
     }),
     route,

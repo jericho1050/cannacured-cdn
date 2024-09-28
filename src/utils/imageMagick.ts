@@ -46,13 +46,13 @@ export const compressImage = async (opts: CompressImageOptions) => {
     im = im
       .resize(opts.size[0], opts.size[1], opts.size[2] === "fit" ? ">" : "^")
       .gravity("Center")
-      .crop.apply(null, opts.crop)
+      .crop.apply(im, opts.crop)
       .repage("+");
   }
 
   if (opts.crop && opts.crop?.length > 2) {
     im = im
-      .crop.apply(null, opts.crop)
+      .crop.apply(im, opts.crop)
       .resize(opts.size[0], opts.size[1], opts.size[2] === "fit" ? ">" : "^")
       .repage("+");
   }
