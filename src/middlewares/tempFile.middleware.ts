@@ -1,9 +1,44 @@
 import { Request, Response, MiddlewareNext, Server } from "hyper-express";
-import fs from "fs";
+import fs, { WriteStream } from "fs";
 import { generateId } from "../utils/flake";
 import path from "path";
 import { tempDirPath } from "../utils/Folders";
 import { pipeline } from "stream/promises";
+
+
+import { Transform, TransformOptions } from 'stream';
+
+class ThrottleTransform extends Transform {
+  buffer: Buffer[];
+  throttleInterval: number;
+  throttling: boolean;
+  constructor(options: TransformOptions & { throttleInterval?: number }) {
+    super(options);
+    this.buffer = [];
+    this.throttleInterval = options.throttleInterval || 100; // Adjust the interval as needed
+    this.throttling = false;
+  }
+
+  _transform(chunk: Buffer, enc: BufferEncoding, cb: () => void) {
+    this.buffer.push(chunk);
+
+    if (!this.throttling) {
+      this.throttling = true;
+      setTimeout(() => {
+        while (this.buffer.length > 0) {
+          const chunk = this.buffer.shift();
+          this.push(chunk);
+        }
+        this.throttling = false;
+        cb();
+      }, this.throttleInterval);
+    } else {
+      cb();
+    }
+  }
+}
+
+
 
 export const tempFileMiddleware = (opts?: { image?: boolean }) => {
   return async (req: Request, res: Response) => {
@@ -12,31 +47,35 @@ export const tempFileMiddleware = (opts?: { image?: boolean }) => {
       if (res.statusCode && res.statusCode < 400) return;
 
       if (writeStream) {
-        fs.promises.unlink(writeStream.path).catch(() => {});
+        fs.promises.unlink(writeStream.path).catch(() => { });
       }
     });
 
     await req
       .multipart({ limits: { files: 1, fields: 0 } }, async (field) => {
         if (!field.file) return;
-        if (!field.file.name) return;
         const fileId = generateId();
-        const tempFilename = fileId + path.extname(field.file.name);
+        const tempFilename = fileId + path.extname(field.file.name || "");
         const tempPath = path.join(tempDirPath, tempFilename);
         const isImage = isImageMime(field.mime_type);
 
         if (opts?.image && !isImage) {
-          res.status(400).json({
-            error: "Invalid image mime type",
-          });
+          field.file.stream.on("readable", () => {
+            res.status(400).json({
+              error: "Invalid image mime type",
+            });
+          })
           return;
         }
 
+        const throttleTransform = new ThrottleTransform({
+          throttleInterval: 400,
+
+        })
         writeStream = fs.createWriteStream(tempPath);
-        const status = await pipeline(field.file.stream, writeStream).catch(
+        const status = await pipeline(field.file.stream, throttleTransform, writeStream).catch(
           () => null
         );
-
         if (status === null) {
           res.status(500).json({
             error: "Failed to upload file",
@@ -61,6 +100,7 @@ export const tempFileMiddleware = (opts?: { image?: boolean }) => {
             .send("There should be no fields in the request.");
         } else {
           const text = typeof error === "string" ? error : "";
+          console.log(error)
           return res
             .status(500)
             .send("Oops! An uncaught error occurred on our end. " + text);
@@ -82,11 +122,9 @@ function isImageMime(mime: string) {
   }
 }
 
-export function safeFilename(filename: string) {
-  let str = filename.replaceAll("/", "_").replaceAll("\\", "_");
-  while (str.trim().startsWith(".")) {
-    str = str.trim().slice(1);
-  }
+export function safeFilename(filename?: string) {
+  let str = filename?.replaceAll("/", "_").replaceAll("\\", "_");
+
   if (!str) return "unnamed";
   return str;
 }
