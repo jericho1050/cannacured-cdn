@@ -1,6 +1,3 @@
-// groupId can:
-// - be a userId for posts
-
 import { Server } from "hyper-express";
 import { tempFileMiddleware } from "../middlewares/tempFile.middleware";
 import { validGroupIdCheckMiddleware } from "../middlewares/validGroupIdCheck.middleware";

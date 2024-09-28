@@ -1,8 +1,9 @@
 import { Server } from 'hyper-express';
 import { handleAttachmentsPostRoute } from './routes/attachmentsPost';
 import { handleVerifyPostRoute } from './routes/verifyPost';
-import { handleAvatarsPostRoute } from './routes/avatars';
+import { handleAvatarsPostRoute } from './routes/avatarPost';
 import { handleBannersPostRoute } from './routes/bannerPost';
+import { handleEmojisPostRoute } from './routes/emojiPost';
 
 
 const server = new Server();
@@ -11,6 +12,7 @@ handleAttachmentsPostRoute(server)
 handleVerifyPostRoute(server)
 handleAvatarsPostRoute(server)
 handleBannersPostRoute(server)
+handleEmojisPostRoute(server)
 
 
 

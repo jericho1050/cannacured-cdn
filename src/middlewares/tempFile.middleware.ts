@@ -5,11 +5,6 @@ import path from "path";
 import { tempDirPath } from "../utils/Folders";
 import { pipeline } from "stream/promises";
 
-
-
-
-
-
 export const tempFileMiddleware = (opts?: { image?: boolean }) => {
   return async (req: Request, res: Response) => {
     let writeStream: fs.WriteStream;

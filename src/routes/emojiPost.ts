@@ -5,8 +5,8 @@ import { addToWaitingList, VerificationType } from "../VerificationService";
 import { Request, Response } from "hyper-express";
 import { config } from "../config";
 
-export function handleBannersPostRoute(server: Server) {
-  server.post("/banners/:groupId", validGroupIdCheckMiddleware, tempFileMiddleware({ image: true }), route, { max_body_length: config.bannerMaxBodyLength })
+export function handleEmojisPostRoute(server: Server) {
+  server.post("/emojis/:groupId", validGroupIdCheckMiddleware, tempFileMiddleware({ image: true }), route, { max_body_length: config.bannerMaxBodyLength })
 }
 
 const route = async (req: Request, res: Response) => {
@@ -22,7 +22,7 @@ const route = async (req: Request, res: Response) => {
     groupId: req.params.groupId as string,
     originalFilename: req.file.originalFilename,
     tempFilename: req.file.tempFilename,
-    type: VerificationType.BANNER
+    type: VerificationType.EMOJI
   }).catch(err => {
     console.error(err)
   })

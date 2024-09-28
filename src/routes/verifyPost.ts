@@ -3,7 +3,7 @@ import { isValidGroupId } from "../middlewares/validGroupIdCheck.middleware";
 import { findAndDeleteWaitingVerification, VerificationType } from "../VerificationService";
 import { Request, Response } from "hyper-express";
 import path, { ParsedPath } from "path";
-import { attachmentsDirPath, avatarsDirPath, bannersDirPath, tempDirPath } from "../utils/Folders";
+import { attachmentsDirPath, avatarsDirPath, bannersDirPath, emojisDirPath, tempDirPath } from "../utils/Folders";
 import { WaitingVerification } from "@prisma/client";
 import fs from 'fs';
 
@@ -76,6 +76,9 @@ function getFilePathFromVerificationType(waitingVerification: WaitingVerificatio
       break;
     case VerificationType.BANNER:
       dirPath = bannersDirPath;
+      break;
+    case VerificationType.EMOJI:
+      dirPath = emojisDirPath;
       break;
   }
 

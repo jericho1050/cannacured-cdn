@@ -5,7 +5,8 @@ import { tempDirPath } from "./utils/Folders";
 export enum VerificationType {
   ATTACHMENT = "ATTACHMENT",
   AVATAR = "AVATAR",
-  BANNER = "BANNER"
+  BANNER = "BANNER",
+  EMOJI = "EMOJI",
 }
 
 interface Opts {
