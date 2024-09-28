@@ -1,9 +1,11 @@
 import { Request, Response } from "hyper-express";
-import { compressImage, CompressImageOptions, removeFile } from "../utils/imageMagick";
+import { compressImage, CompressImageOptions, pointsToDimensions, removeFile } from "../utils/imageMagick";
 import path from "path";
 import { tempDirPath } from "../utils/Folders";
 
-type Opts = Omit<Omit<CompressImageOptions, "tempPath">, "filename">
+type Opts = Omit<Omit<Omit<Omit<CompressImageOptions, "tempPath">, "filename">, "newPath">, "crop"> & {
+  allowCrop?: boolean;
+}
 export const compressImageMiddleware = (opts: Opts) => {
   return async (req: Request, res: Response) => {
     if (req?.file?.shouldCompress) {
@@ -13,11 +15,24 @@ export const compressImageMiddleware = (opts: Opts) => {
       })
       const tempFilePath = path.join(tempDirPath, req.file.tempFilename);
 
+      let strPoints = req.query.points as string | undefined;
+      let crop: [number, number, number, number] | [number, number] | undefined = undefined;
+      if (opts.allowCrop) {
+        const [dimensions, points, dimErr] = pointsToDimensions(strPoints);
+        if (dimErr) {
+          return res.status(403).json(dimErr);
+        }
+        crop = dimensions ? [dimensions.width, dimensions.height, points[0]!, points[1]!] : [opts.size[0], opts.size[1]];
+        console.log(crop)
+      }
+
 
       const [result, err] = await compressImage({
         ...opts,
         tempPath: tempFilePath,
+        newPath: tempDirPath,
         filename: req.file.tempFilename,
+        crop,
       });
 
       if (err) {

@@ -4,9 +4,19 @@ import { validGroupIdCheckMiddleware } from "../middlewares/validGroupIdCheck.mi
 import { addToWaitingList, VerificationType } from "../VerificationService";
 import { Request, Response } from "hyper-express";
 import { config } from "../config";
+import { compressImageMiddleware } from "../middlewares/compressImage.middleware";
+import { tempDirPath } from "../utils/Folders";
 
 export function handleEmojisPostRoute(server: Server) {
-  server.post("/emojis/:groupId", validGroupIdCheckMiddleware, tempFileMiddleware({ image: true }), route, { max_body_length: config.imageMaxBodyLength })
+  server.post("/emojis/:groupId",
+    validGroupIdCheckMiddleware,
+    tempFileMiddleware({ image: true }),
+    compressImageMiddleware({
+      size: [100, 100, "fit"]
+    }),
+    route,
+    { max_body_length: config.imageMaxBodyLength }
+  )
 }
 
 const route = async (req: Request, res: Response) => {
@@ -16,7 +26,12 @@ const route = async (req: Request, res: Response) => {
     })
     return;
   }
-
+  if (!req.file.shouldCompress) {
+    res.status(500).json({
+      error: "Internal server error."
+    })
+    return;
+  }
   const result = await addToWaitingList({
     fileId: req.file.fileId,
     groupId: req.params.groupId as string,

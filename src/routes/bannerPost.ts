@@ -4,15 +4,29 @@ import { validGroupIdCheckMiddleware } from "../middlewares/validGroupIdCheck.mi
 import { addToWaitingList, VerificationType } from "../VerificationService";
 import { Request, Response } from "hyper-express";
 import { config } from "../config";
+import { compressImageMiddleware } from "../middlewares/compressImage.middleware";
+import { tempDirPath } from "../utils/Folders";
 
 export function handleBannersPostRoute(server: Server) {
-  server.post("/banners/:groupId", validGroupIdCheckMiddleware, tempFileMiddleware({ image: true }), route, { max_body_length: config.imageMaxBodyLength })
+  server.post("/banners/:groupId",
+    validGroupIdCheckMiddleware,
+    tempFileMiddleware({ image: true }),
+    compressImageMiddleware({
+      size: [1920, 1080, "fit"]
+    }),
+    route, { max_body_length: config.imageMaxBodyLength })
 }
 
 const route = async (req: Request, res: Response) => {
   if (!req.file) {
     res.status(400).json({
       error: "Missing file"
+    })
+    return;
+  }
+  if (!req.file.shouldCompress) {
+    res.status(500).json({
+      error: "Internal server error."
     })
     return;
   }

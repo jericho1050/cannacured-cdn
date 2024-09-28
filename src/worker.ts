@@ -32,7 +32,7 @@ server.get("/index.html", (req, res) => {
         const formData = new FormData()
         formData.append('file', file.files[0])
 
-        const response = await fetch('/attachments/1', {
+        const response = await fetch('/avatars/1', {
           method: 'POST',
           body: formData
         })
