@@ -65,7 +65,7 @@ export const compressImage = async (opts: CompressImageOptions) => {
     }
     return [
       {
-        path: path.join(newPath, newFilename),
+        path: newPath,
         newFilename,
         fileSize: await fs.promises.stat(newPath).then(stat => stat.size),
         dimensions: { width: newMetadata.width, height: newMetadata.height },
@@ -93,5 +93,5 @@ async function asyncWrite(im: gm.State, filename: string) {
 
 export async function removeFile(path: string) {
   if (!path) return;
-  return await fs.promises.unlink(path).catch(() => { });
+  return await fs.promises.unlink(path).catch((e) => { });
 }

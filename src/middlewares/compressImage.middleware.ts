@@ -13,7 +13,6 @@ export const compressImageMiddleware = (opts: Opts) => {
       })
       const tempFilePath = path.join(tempDirPath, req.file.tempFilename);
 
-      console.log("compressing")
 
       const [result, err] = await compressImage({
         ...opts,
@@ -30,11 +29,12 @@ export const compressImageMiddleware = (opts: Opts) => {
       if (closed) {
         removeFile(result.path)
         removeFile(tempFilePath)
+
+        return;
       }
       req.file.fileSize = result.fileSize
       req.file.compressedFilename = result.newFilename
       req.file.originalFilename = path.parse(req.file.originalFilename).name + path.parse(result.newFilename).ext
-      req.file.tempFilename = path.parse(req.file.tempFilename).name + path.parse(result.newFilename).ext
       if (result.gif) {
         req.file.mimetype = "image/gif"
       } else {
@@ -42,8 +42,8 @@ export const compressImageMiddleware = (opts: Opts) => {
       }
       if (req.file.tempFilename !== req.file.compressedFilename) {
         removeFile(tempFilePath);
+        req.file.tempFilename = path.parse(req.file.tempFilename).name + path.parse(result.newFilename).ext
       }
-      console.log("done")
     }
   };
 };
