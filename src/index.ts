@@ -6,12 +6,14 @@ import { setTimeout } from "timers/promises";
 import path from "path";
 import fs from "fs";
 import { config } from "./config";
+import { removeExpiredFiles } from "./ExpireFileService";
 
 const cpus = config.devMode ? 1 : os.cpus().length;
 
 if (cluster.isPrimary) {
   createFolders();
   removeExpiredVerificationsAtInterval();
+  removeExpiredFilesAtInterval();
   for (let i = 0; i < cpus; i++) {
     cluster.fork({
       cpu: i,
@@ -38,8 +40,27 @@ async function removeExpiredVerificationsAtInterval() {
       fs.promises.unlink(filePath).catch(() => { });
     }
 
-    console.log("Removed", results.length, "expired files.")
+    console.log("Removed", results.length, "expired temp files.")
   }
   await setTimeout(removeExpiredVerificationsInterval);
   removeExpiredVerificationsAtInterval();
+}
+
+
+
+// 2 minutes
+const removeExpiredFilesInterval = 2 * 60 * 1000;
+async function removeExpiredFilesAtInterval() {
+
+
+  const results = await removeExpiredFiles().catch(err => {
+    console.error(err)
+  });
+  if (results && results.length) {
+    console.log("Removed", results.length, "expired files.")
+  }
+
+
+  await setTimeout(removeExpiredFilesInterval);
+  removeExpiredFilesAtInterval();
 }

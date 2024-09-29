@@ -45,6 +45,7 @@ export const removeExpiredVerifications = async () => {
   const expired = new Date(Date.now() - 5 * 60 * 1000);
 
   const results = await prisma.waitingVerification.findMany({
+    take: 1000,
     where: {
       createdAt: {
         lt: expired,
