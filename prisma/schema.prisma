@@ -14,7 +14,7 @@ datasource db {
 }
 
 model WaitingVerification {
-  id                String @id
+  fileId                String @id
   groupId           String
 
   tempFilename      String
@@ -23,10 +23,17 @@ model WaitingVerification {
   mimetype          String
   animated          Boolean
 
+  compressed       Boolean
+
   type               String
 
 
   createdAt         DateTime @default(now())
+}
 
+model ExpireFile {
+  fileId String @id
+  groupId String
 
+  createdAt         DateTime @default(now())
 }

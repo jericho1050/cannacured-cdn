@@ -20,15 +20,18 @@ interface Opts {
   animated: boolean;
   filesize: number;
   mimetype: string;
+
+  compressed?: boolean;
 }
 
 export const addToWaitingList = async (opts: Opts) => {
   return prisma.waitingVerification.create({
     data: {
-      id: opts.fileId,
+      fileId: opts.fileId,
       type: opts.type,
       originalFilename: opts.originalFilename,
       tempFilename: opts.tempFilename,
+      compressed: opts.compressed || false,
       groupId: opts.groupId,
       animated: opts.animated,
       filesize: opts.filesize,
@@ -48,12 +51,12 @@ export const removeExpiredVerifications = async () => {
       },
     },
   });
-  const ids = results.map((r) => r.id);
+  const fileIds = results.map((r) => r.fileId);
 
   await prisma.waitingVerification.deleteMany({
     where: {
-      id: {
-        in: ids,
+      fileId: {
+        in: fileIds,
       },
     },
   });
@@ -69,7 +72,7 @@ export const findAndDeleteWaitingVerification = async (
   return prisma.waitingVerification
     .delete({
       where: {
-        id: fileId,
+        fileId,
         groupId,
         type,
       },

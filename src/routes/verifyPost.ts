@@ -7,17 +7,17 @@ import {
 import { Request, Response } from "hyper-express";
 import path, { ParsedPath } from "path";
 import {
-  attachmentsDirPath,
-  avatarsDirPath,
-  bannersDirPath,
-  emojisDirPath,
   tempDirPath,
 } from "../utils/Folders";
 import { WaitingVerification } from "@prisma/client";
 import fs from "fs";
+import { typeToDir } from "../utils/uploadType";
+import { config } from "../config";
+import { addToExpireList } from "../ExpireFileService";
+import { checkSecretMiddleware } from "../middlewares/checkSecret.middleware";
 
 export function handleVerifyPostRoute(server: Server) {
-  server.post("/verify/:groupId/:fileId", route);
+  server.post("/verify/:groupId/:fileId", checkSecretMiddleware, route);
 }
 
 const route = async (req: Request, res: Response) => {
@@ -61,43 +61,56 @@ const route = async (req: Request, res: Response) => {
     await fs.promises.mkdir(newPath.dirPath, { recursive: true });
     await fs.promises.rename(tempPath, fullPath);
   } catch {
-    fs.promises.unlink(tempPath).catch(() => {});
-    fs.promises.unlink(fullPath).catch(() => {});
+    fs.promises.unlink(tempPath).catch(() => { });
+    fs.promises.unlink(fullPath).catch(() => { });
 
     res.status(500).json({
       error: "Internal server error.",
     });
   }
 
+  let expireAt: number | undefined = undefined;
+
+  if (!waitingVerification.compressed) {
+    const expireFile = await addToExpireList({
+      fileId: waitingVerification.fileId,
+      groupId: waitingVerification.groupId,
+    }).catch((err) => {
+      console.error(err);
+    });
+
+    if (!expireFile) {
+      res.status(500).json({
+        error: "Failed to add to expire list",
+      });
+      fs.promises.unlink(tempPath).catch(() => { });
+      fs.promises.unlink(fullPath).catch(() => { });
+      return;
+    };
+    expireAt = expireFile.expireAt;
+  }
+
+
   res.status(200).json({
-    success: true,
     path: path.join(
       newPath.relativeDirPath,
       encodeURI(newPath.parsedFilePath.name) + newPath.parsedFilePath.ext
-    ),
+    ).replaceAll("\\", "/"),
     filesize: waitingVerification.filesize,
     animated: waitingVerification.animated,
     mimetype: waitingVerification.mimetype,
+    compressed: waitingVerification.compressed,
+    expireAt,
   });
 };
 
 function getFilePathFromVerificationType(
   waitingVerification: WaitingVerification
 ) {
-  let dirPath: string | undefined;
-  switch (waitingVerification.type as VerificationType) {
-    case VerificationType.ATTACHMENT:
-      dirPath = attachmentsDirPath;
-      break;
-    case VerificationType.AVATAR:
-      dirPath = avatarsDirPath;
-      break;
-    case VerificationType.BANNER:
-      dirPath = bannersDirPath;
-      break;
-    case VerificationType.EMOJI:
-      dirPath = emojisDirPath;
-      break;
+  let dirPath = typeToDir(waitingVerification.type);
+
+  if (!dirPath) {
+    throw new Error(`Invalid type: ${waitingVerification.type}`);
   }
 
   let relativeDirPath: string;
@@ -106,7 +119,7 @@ function getFilePathFromVerificationType(
   if (waitingVerification.type === VerificationType.ATTACHMENT) {
     relativeDirPath = path.join(
       waitingVerification.groupId,
-      waitingVerification.id
+      waitingVerification.fileId
     );
     parsedFilePath = path.parse(waitingVerification.originalFilename);
   } else {

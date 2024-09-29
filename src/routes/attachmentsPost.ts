@@ -35,6 +35,7 @@ const route = async (req: Request, res: Response) => {
     originalFilename: req.file.originalFilename,
     tempFilename: req.file.tempFilename,
     animated: req.file.animated,
+    compressed: !!req.file.compressedFilename,
     filesize: req.file.filesize,
     mimetype: req.file.mimetype,
   }).catch((err) => {
