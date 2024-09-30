@@ -1,7 +1,7 @@
 -- CreateTable
 CREATE TABLE "WaitingVerification" (
     "fileId" TEXT NOT NULL,
-    "groupId" TEXT NOT NULL,
+    "groupId" TEXT,
     "tempFilename" TEXT NOT NULL,
     "originalFilename" TEXT NOT NULL,
     "filesize" INTEGER NOT NULL,

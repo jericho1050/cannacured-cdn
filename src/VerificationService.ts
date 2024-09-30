@@ -11,7 +11,7 @@ export enum VerificationType {
 
 interface Opts {
   fileId: string;
-  groupId: string;
+  groupId?: string;
 
   tempFilename: string;
   originalFilename: string;
@@ -67,7 +67,7 @@ export const removeExpiredVerifications = async () => {
 
 export const findAndDeleteWaitingVerification = async (
   fileId: string,
-  groupId: string,
+  groupId: string | undefined,
   type: VerificationType
 ) => {
   return prisma.waitingVerification

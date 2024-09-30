@@ -8,7 +8,6 @@ interface AddToExpireListOpts {
   fileId: string;
   groupId: string;
 }
-console.log(env.attachmentMaxBodyLength)
 export const addToExpireList = async (opts: AddToExpireListOpts) => {
   const data = await prisma.expireFile.create({
     data: {

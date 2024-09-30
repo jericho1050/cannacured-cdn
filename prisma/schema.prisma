@@ -15,7 +15,7 @@ datasource db {
 
 model WaitingVerification {
   fileId                String @id
-  groupId           String
+  groupId           String?
 
   tempFilename      String
   originalFilename  String

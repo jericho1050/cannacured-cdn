@@ -28,7 +28,7 @@ const route = async (req: Request, res: Response) => {
     return;
   }
 
-  if (!req.file.shouldCompress) {
+  if (!req.file.compressedFilename) {
     res.status(500).json({
       error: "Internal server error.",
     });
@@ -39,6 +39,7 @@ const route = async (req: Request, res: Response) => {
     type: VerificationType.AVATAR,
     fileId: req.file.fileId,
     groupId: req.params.groupId as string,
+    compressed: true,
     originalFilename: req.file.originalFilename,
     tempFilename: req.file.tempFilename,
     animated: req.file.animated,

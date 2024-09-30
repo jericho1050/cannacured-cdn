@@ -11,13 +11,14 @@ import {
 } from "../utils/Folders";
 import { WaitingVerification } from "@prisma/client";
 import fs from "fs";
-import { typeToDir } from "../utils/uploadType";
+import { typeToDir, typeToRelativeDir } from "../utils/uploadType";
 import { env } from "../env";
 import { addToExpireList } from "../ExpireFileService";
 import { checkSecretMiddleware } from "../middlewares/checkSecret.middleware";
 
 export function handleVerifyPostRoute(server: Server) {
   server.post("/verify/:groupId/:fileId", checkSecretMiddleware, route);
+  server.post("/verify/:fileId", checkSecretMiddleware, route);
 }
 
 const route = async (req: Request, res: Response) => {
@@ -30,8 +31,21 @@ const route = async (req: Request, res: Response) => {
     });
     return;
   }
+  if (groupId && !isValidGroupId(groupId)) {
+    res.status(400).json({
+      error: "Invalid groupId or fileId",
+    });
+    return;
+  }
 
-  if (!isValidGroupId(groupId) || !isValidGroupId(fileId)) {
+  if (type !== "EMOJI" && !groupId) {
+    res.status(400).json({
+      error: "Missing groupId",
+    });
+    return;
+  }
+
+  if (!isValidGroupId(fileId)) {
     res.status(400).json({
       error: "Invalid groupId or fileId",
     });
@@ -74,7 +88,7 @@ const route = async (req: Request, res: Response) => {
   if (!waitingVerification.compressed) {
     const expireFile = await addToExpireList({
       fileId: waitingVerification.fileId,
-      groupId: waitingVerification.groupId,
+      groupId: waitingVerification.groupId!,
     }).catch((err) => {
       console.error(err);
     });
@@ -104,12 +118,17 @@ const route = async (req: Request, res: Response) => {
   });
 };
 
+
 function getFilePathFromVerificationType(
   waitingVerification: WaitingVerification
 ) {
-  let dirPath = typeToDir(waitingVerification.type);
+  const dirPath = typeToDir(waitingVerification.type);
+  const relDirPath = typeToRelativeDir(waitingVerification.type);
 
   if (!dirPath) {
+    throw new Error(`Invalid type: ${waitingVerification.type}`);
+  }
+  if (!relDirPath) {
     throw new Error(`Invalid type: ${waitingVerification.type}`);
   }
 
@@ -117,13 +136,22 @@ function getFilePathFromVerificationType(
   let parsedFilePath: ParsedPath;
 
   if (waitingVerification.type === VerificationType.ATTACHMENT) {
-    relativeDirPath = path.join(
+    if (!waitingVerification.groupId) {
+      throw new Error("Missing groupId");
+    }
+    relativeDirPath = path.join(relDirPath,
       waitingVerification.groupId,
       waitingVerification.fileId
     );
     parsedFilePath = path.parse(waitingVerification.originalFilename);
+  } else if (waitingVerification.type === VerificationType.EMOJI) {
+    relativeDirPath = path.join(relDirPath);
+    parsedFilePath = path.parse(waitingVerification.tempFilename);
   } else {
-    relativeDirPath = path.join(waitingVerification.groupId);
+    if (!waitingVerification.groupId) {
+      throw new Error("Missing groupId");
+    }
+    relativeDirPath = path.join(relDirPath, waitingVerification.groupId);
     parsedFilePath = path.parse(waitingVerification.tempFilename);
   }
 

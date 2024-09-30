@@ -27,7 +27,7 @@ const route = async (req: Request, res: Response) => {
     });
     return;
   }
-  if (!req.file.shouldCompress) {
+  if (!req.file.compressedFilename) {
     res.status(500).json({
       error: "Internal server error.",
     });
@@ -37,6 +37,7 @@ const route = async (req: Request, res: Response) => {
   const result = await addToWaitingList({
     type: VerificationType.BANNER,
     fileId: req.file.fileId,
+    compressed: true,
     groupId: req.params.groupId as string,
     originalFilename: req.file.originalFilename,
     tempFilename: req.file.tempFilename,

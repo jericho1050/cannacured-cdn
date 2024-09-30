@@ -16,38 +16,38 @@ handleEmojisPostRoute(server)
 
 
 
-server.get("/index.html", (req, res) => {
-  res.send(`
-    
-    <html>
-    <input type="file" id="file" />
-    <button id="submit">Upload</button>
+// server.get("/index.html", (req, res) => {
+//   res.send(`
 
-    <script>
-      const file = document.getElementById('file')
-      const submit = document.getElementById('submit')
+//     <html>
+//     <input type="file" id="file" />
+//     <button id="submit">Upload</button>
 
-      submit.addEventListener('click', async () => {
-      console.log("sending...")
-        const formData = new FormData()
-        formData.append('file', file.files[0])
+//     <script>
+//       const file = document.getElementById('file')
+//       const submit = document.getElementById('submit')
 
-        const response = await fetch('/avatars/1', {
-          method: 'POST',
-          body: formData
-        })
+//       submit.addEventListener('click', async () => {
+//       console.log("sending...")
+//         const formData = new FormData()
+//         formData.append('file', file.files[0])
 
-        const result = await response.json()
+//         const response = await fetch('/avatars/1', {
+//           method: 'POST',
+//           body: formData
+//         })
 
-        console.log(result)
+//         const result = await response.json()
 
-      })
+//         console.log(result)
 
-    </script>
-    </html>
-    
-    `)
-})
+//       })
+
+//     </script>
+//     </html>
+
+//     `)
+// })
 
 server.listen(3000, () => {
   console.log('Server started on port 3000');

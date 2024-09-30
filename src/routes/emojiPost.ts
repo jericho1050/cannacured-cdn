@@ -9,8 +9,7 @@ import { tempDirPath } from "../utils/Folders";
 
 export function handleEmojisPostRoute(server: Server) {
   server.post(
-    "/emojis/:groupId",
-    validGroupIdCheckMiddleware,
+    "/emojis",
     tempFileMiddleware({ image: true }),
     compressImageMiddleware({
       size: [100, 100, "fit"],
@@ -27,7 +26,7 @@ const route = async (req: Request, res: Response) => {
     });
     return;
   }
-  if (!req.file.shouldCompress) {
+  if (!req.file.compressedFilename) {
     res.status(500).json({
       error: "Internal server error.",
     });
@@ -38,6 +37,7 @@ const route = async (req: Request, res: Response) => {
     fileId: req.file.fileId,
     groupId: req.params.groupId as string,
     originalFilename: req.file.originalFilename,
+    compressed: true,
     tempFilename: req.file.tempFilename,
     animated: req.file.animated,
     filesize: req.file.filesize,
