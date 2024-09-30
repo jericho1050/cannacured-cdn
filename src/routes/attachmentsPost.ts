@@ -3,7 +3,7 @@ import { tempFileMiddleware } from "../middlewares/tempFile.middleware";
 import { validGroupIdCheckMiddleware } from "../middlewares/validGroupIdCheck.middleware";
 import { addToWaitingList, VerificationType } from "../VerificationService";
 import { Request, Response } from "hyper-express";
-import { config } from "../config";
+import { env } from "../env";
 import { tempDirPath } from "../utils/Folders";
 import { compressImageMiddleware } from "../middlewares/compressImage.middleware";
 
@@ -16,7 +16,7 @@ export function handleAttachmentsPostRoute(server: Server) {
       size: [1920, 1080, "fit"],
     }),
     route,
-    { max_body_length: config.attachmentMaxBodyLength }
+    { max_body_length: env.attachmentMaxBodyLength }
   );
 }
 

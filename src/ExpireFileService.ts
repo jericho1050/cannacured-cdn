@@ -1,5 +1,5 @@
 import path from "path";
-import { config } from "./config";
+import { env } from "./env";
 import { prisma } from "./db";
 import fs from 'fs';
 import { attachmentsDirPath } from "./utils/Folders";
@@ -8,6 +8,7 @@ interface AddToExpireListOpts {
   fileId: string;
   groupId: string;
 }
+console.log(env.attachmentMaxBodyLength)
 export const addToExpireList = async (opts: AddToExpireListOpts) => {
   const data = await prisma.expireFile.create({
     data: {
@@ -15,14 +16,14 @@ export const addToExpireList = async (opts: AddToExpireListOpts) => {
       groupId: opts.groupId,
     }
   })
-  const expireAt = data.createdAt.getTime() + config.expireFileMS;
+  const expireAt = data.createdAt.getTime() + env.expireFileMS;
   return { expireAt };
 }
 
 
 export const removeExpiredFiles = async () => {
   // 5 minutes
-  const expired = new Date(Date.now() - config.expireFileMS);
+  const expired = new Date(Date.now() - env.expireFileMS);
 
   const results = await prisma.expireFile.findMany({
     take: 1000,

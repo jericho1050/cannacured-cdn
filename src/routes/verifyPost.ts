@@ -12,7 +12,7 @@ import {
 import { WaitingVerification } from "@prisma/client";
 import fs from "fs";
 import { typeToDir } from "../utils/uploadType";
-import { config } from "../config";
+import { env } from "../env";
 import { addToExpireList } from "../ExpireFileService";
 import { checkSecretMiddleware } from "../middlewares/checkSecret.middleware";
 

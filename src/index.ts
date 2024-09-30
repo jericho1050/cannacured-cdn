@@ -5,10 +5,11 @@ import { removeExpiredVerifications } from "./VerificationService";
 import { setTimeout } from "timers/promises";
 import path from "path";
 import fs from "fs";
-import { config } from "./config";
+import { env } from "./env";
 import { removeExpiredFiles } from "./ExpireFileService";
 
-const cpus = config.devMode ? 1 : os.cpus().length;
+const cpus = env.devMode ? 1 : os.cpus().length;
+
 
 if (cluster.isPrimary) {
   createFolders();

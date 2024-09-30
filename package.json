@@ -4,9 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "tsup --onSuccess \"node --enable-source-maps dist/index.mjs\"",
+    "start": "tsup --onSuccess \"node --env-file=.env --enable-source-maps dist/index.mjs\"",
     "bundle": "tsup",
-    "dev": "tsup --watch --onSuccess \"node --enable-source-maps dist/index.mjs\"",
+    "dev": "tsup --watch --onSuccess \"node --env-file=.env --enable-source-maps dist/index.mjs\"",
     "build": "pnpm bundle"
   },
   "devDependencies": {

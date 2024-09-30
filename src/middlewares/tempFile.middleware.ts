@@ -5,7 +5,7 @@ import path from "path";
 import { tempDirPath } from "../utils/Folders";
 import { pipeline } from "stream/promises";
 import { bytesToMb } from "../utils/bytes";
-import { config } from "../config";
+import { env } from "../env";
 
 export const tempFileMiddleware = (opts?: { image?: boolean }) => {
   return async (req: Request, res: Response) => {
@@ -14,9 +14,9 @@ export const tempFileMiddleware = (opts?: { image?: boolean }) => {
       if (res.statusCode && res.statusCode < 400) return;
 
       if (writeStream) {
-        fs.promises.unlink(writeStream.path).catch(() => {});
+        fs.promises.unlink(writeStream.path).catch(() => { });
         if (req.file?.compressedFilename) {
-          fs.promises.unlink(req.file.compressedFilename).catch(() => {});
+          fs.promises.unlink(req.file.compressedFilename).catch(() => { });
         }
       }
     });
@@ -61,7 +61,7 @@ export const tempFileMiddleware = (opts?: { image?: boolean }) => {
           mimetype: field.mime_type,
           animated: false,
           filesize,
-          shouldCompress: isImage && filesize <= config.imageMaxBodyLength,
+          shouldCompress: isImage && filesize <= env.imageMaxBodyLength,
         };
       })
       .catch((error) => {

@@ -1,8 +1,8 @@
 import { Request, Response } from 'hyper-express';
-import { config } from '../config';
+import { env } from '../env';
 
 
-if (config.devMode) {
+if (env.devMode) {
   console.log('Warn: Dev mode enabled, skipping secret check');
 }
 
@@ -16,7 +16,7 @@ export const checkSecretMiddleware = async (req: Request, res: Response) => {
     });
     return;
   }
-  if (secret !== config.secret) {
+  if (secret !== env.secret) {
     res.status(401).json({
       error: 'Invalid secret header',
     });
