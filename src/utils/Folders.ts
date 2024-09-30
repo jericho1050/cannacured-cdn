@@ -41,3 +41,16 @@ export function createFolders() {
     fs.mkdirSync(emojisDirPath, { recursive: true });
   }
 }
+
+
+
+
+export async function isDirectory(path: string) {
+  if (!path) return false;
+  try {
+    const stat = await fs.promises.stat(path);
+    return stat.isDirectory();
+  } catch (err) {
+    return false;
+  }
+}

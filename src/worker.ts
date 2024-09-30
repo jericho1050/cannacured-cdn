@@ -4,6 +4,7 @@ import { handleVerifyPostRoute } from './routes/verifyPost';
 import { handleAvatarsPostRoute } from './routes/avatarPost';
 import { handleBannersPostRoute } from './routes/bannerPost';
 import { handleEmojisPostRoute } from './routes/emojiPost';
+import { handleDeleteFileRoute } from './routes/deleteFile';
 
 
 const server = new Server();
@@ -13,6 +14,7 @@ handleVerifyPostRoute(server)
 handleAvatarsPostRoute(server)
 handleBannersPostRoute(server)
 handleEmojisPostRoute(server)
+handleDeleteFileRoute(server)
 
 
 

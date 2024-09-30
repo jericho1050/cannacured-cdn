@@ -10,6 +10,10 @@ if (env.devMode) {
 export const checkSecretMiddleware = async (req: Request, res: Response) => {
   const secret = req.headers['secret'] as string;
 
+  if (env.devMode) {
+    return;
+  }
+
   if (!secret) {
     res.status(400).json({
       error: 'Missing secret header',

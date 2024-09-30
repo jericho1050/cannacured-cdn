@@ -60,3 +60,14 @@ export const removeExpiredFiles = async () => {
 
   return fileIds;
 };
+
+
+export const deleteExpiringFiles = async (fileIds: string[]) => {
+  return await prisma.expireFile.deleteMany({
+    where: {
+      fileId: {
+        in: fileIds,
+      }
+    }
+  })
+}

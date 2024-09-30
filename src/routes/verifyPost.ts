@@ -7,6 +7,7 @@ import {
 import { Request, Response } from "hyper-express";
 import path, { ParsedPath } from "path";
 import {
+  publicDirPath,
   tempDirPath,
 } from "../utils/Folders";
 import { WaitingVerification } from "@prisma/client";
@@ -103,6 +104,7 @@ const route = async (req: Request, res: Response) => {
     };
     expireAt = expireFile.expireAt;
   }
+  console.log(newPath)
 
 
   res.status(200).json({
@@ -155,7 +157,7 @@ function getFilePathFromVerificationType(
     parsedFilePath = path.parse(waitingVerification.tempFilename);
   }
 
-  let fullDirPath = path.join(dirPath, relativeDirPath);
+  let fullDirPath = path.join(publicDirPath, relativeDirPath);
 
   return {
     dirPath: fullDirPath,
