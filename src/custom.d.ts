@@ -3,6 +3,7 @@ import { DefaultRequestLocals } from "hyper-express";
 declare module "hyper-express" {
   interface Request<T = DefaultRequestLocals> {
     file?: {
+      tempPath: string;
       originalFilename: string;
       fileId: string;
       tempFilename: string;

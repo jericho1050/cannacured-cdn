@@ -55,6 +55,7 @@ export const tempFileMiddleware = (opts?: { image?: boolean }) => {
 
         const filesize = (await fs.promises.stat(tempPath)).size;
         req.file = {
+          tempPath,
           tempFilename,
           fileId,
           originalFilename: safeFilename(field.file.name),

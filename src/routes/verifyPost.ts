@@ -104,7 +104,6 @@ const route = async (req: Request, res: Response) => {
     };
     expireAt = expireFile.expireAt;
   }
-  console.log(newPath)
 
 
   res.status(200).json({
@@ -114,6 +113,7 @@ const route = async (req: Request, res: Response) => {
     ).replaceAll("\\", "/"),
     filesize: waitingVerification.filesize,
     animated: waitingVerification.animated,
+    ...(waitingVerification.duration !== undefined ? { duration: waitingVerification.duration } : {}),
     mimetype: waitingVerification.mimetype,
     compressed: waitingVerification.compressed,
     expireAt,

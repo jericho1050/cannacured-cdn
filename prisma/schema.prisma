@@ -27,6 +27,8 @@ model WaitingVerification {
 
   type               String
 
+  duration          Float?
+
 
   createdAt         DateTime @default(now())
 }

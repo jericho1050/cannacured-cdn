@@ -21,6 +21,8 @@ interface Opts {
   filesize: number;
   mimetype: string;
 
+  duration?: number
+
   compressed?: boolean;
 }
 
@@ -35,6 +37,7 @@ export const addToWaitingList = async (opts: Opts) => {
       groupId: opts.groupId,
       animated: opts.animated,
       filesize: opts.filesize,
+      duration: opts.duration,
       mimetype: opts.mimetype,
     },
   });

@@ -9,6 +9,7 @@ CREATE TABLE "WaitingVerification" (
     "animated" BOOLEAN NOT NULL,
     "compressed" BOOLEAN NOT NULL,
     "type" TEXT NOT NULL,
+    "duration" DOUBLE PRECISION,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "WaitingVerification_pkey" PRIMARY KEY ("fileId")

@@ -6,6 +6,7 @@ import { Request, Response } from "hyper-express";
 import { env } from "../env";
 import { tempDirPath } from "../utils/Folders";
 import { compressImageMiddleware } from "../middlewares/compressImage.middleware";
+import { getAudioDurationInSeconds } from 'get-audio-duration'
 
 export function handleAttachmentsPostRoute(server: Server) {
   server.post(
@@ -28,12 +29,21 @@ const route = async (req: Request, res: Response) => {
     return;
   }
 
+
+  const isAudio = req.file.mimetype === "audio/ogg" || req.file.mimetype === "audio/mp3";
+  const isVideo = req.file.mimetype === "video/mp4";
+  let duration: number | undefined;
+
+  if (isAudio || isVideo) {
+    duration = await getAudioDurationInSeconds(req.file.tempPath);
+  }
+
   const result = await addToWaitingList({
     type: VerificationType.ATTACHMENT,
     fileId: req.file.fileId,
     groupId: req.params.groupId as string,
     originalFilename: req.file.originalFilename,
-
+    duration,
     tempFilename: req.file.tempFilename,
     animated: req.file.animated,
     compressed: !!req.file.compressedFilename,
