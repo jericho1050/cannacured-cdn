@@ -3,5 +3,4 @@ dist
 src/env.ts
 public
 temp
-prisma/dev.db-journal
-prisma/dev.db
+.env
