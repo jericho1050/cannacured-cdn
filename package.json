@@ -3,14 +3,19 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
+  "type": "module",
   "scripts": {
-    "start": "tsup --onSuccess \"node --env-file=.env --enable-source-maps dist/index.mjs\"",
+    "start": "tsup --onSuccess \"node --env-file=.env --enable-source-maps dist/index.js\"",
     "bundle": "tsup",
-    "dev": "tsup --watch --onSuccess \"node --env-file=.env --enable-source-maps dist/index.mjs\"",
-    "build": "pnpm bundle"
+    "dev": "tsup --watch --onSuccess \"node --env-file=.env --enable-source-maps dist/index.js\"",
+    "build": "pnpm bundle",
+    "test": "pnpm build && pnpm mocha ./test/*.test.js"
   },
   "devDependencies": {
+    "@types/chai": "^5.0.0",
     "@types/gm": "^1.25.4",
+    "chai": "^5.1.1",
+    "mocha": "^10.7.3",
     "prisma": "^5.20.0",
     "tsup": "^8.1.0",
     "typescript": "^5.5.2"

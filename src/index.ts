@@ -1,6 +1,6 @@
 import os from "os";
 import cluster from "cluster";
-import { createFolders, publicDirPath, tempDirPath } from "./utils/Folders";
+import { createFolders, tempDirPath } from "./utils/Folders";
 import { removeExpiredVerifications } from "./VerificationService";
 import { setTimeout } from "timers/promises";
 import path from "path";
@@ -65,3 +65,4 @@ async function removeExpiredFilesAtInterval() {
   await setTimeout(removeExpiredFilesInterval);
   removeExpiredFilesAtInterval();
 }
+

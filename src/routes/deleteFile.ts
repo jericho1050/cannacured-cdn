@@ -17,7 +17,6 @@ const route = async (req: Request, res: Response) => {
   }
 
   const fullPath = path.join(publicDirPath, decodeURI(pathToDelete));
-  console.log(fullPath)
   if (fullPath.includes("../")) return res.status(400).json({ error: "Invalid path" });
 
 
@@ -41,7 +40,9 @@ const route = async (req: Request, res: Response) => {
   const fileId = pathToDelete.split("/")[2]!;
 
   if (fileId) {
-    await deleteExpiringFiles([fileId]);
+    await deleteExpiringFiles([fileId]).catch(err => {
+      console.error(err);
+    })
   }
   if (parentFiles === null) return;
   if (parentFiles.length !== 0) return res.status(404).json({ status: "deleted" });

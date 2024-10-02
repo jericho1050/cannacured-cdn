@@ -26,14 +26,15 @@ const route = async (req: Request, res: Response) => {
 
   const isDir = await isDirectory(fullPath);
   if (isDir) {
-    res.status(404).end();
+    res.status(404).send('Not found');
+
     return;
   }
 
   const filesize = await fs.promises.stat(fullPath).then((stats) => stats.size).catch(() => null);
 
   if (filesize === null) {
-    res.status(404).end();
+    res.status(404).send('Not found');
     return;
   }
 

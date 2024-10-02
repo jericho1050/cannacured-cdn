@@ -6,6 +6,7 @@ import { tempDirPath } from "../utils/Folders";
 import { pipeline } from "stream/promises";
 import { bytesToMb } from "../utils/bytes";
 import { env } from "../env";
+import { isImageMime, safeFilename } from "../utils/utils";
 
 export const tempFileMiddleware = (opts?: { image?: boolean }) => {
   return async (req: Request, res: Response) => {
@@ -85,23 +86,3 @@ export const tempFileMiddleware = (opts?: { image?: boolean }) => {
   };
 };
 
-const SupportedImages = [
-  "image/jpeg",
-  "image/jpg",
-  "image/png",
-  "image/webp",
-  "image/gif",
-];
-function isImageMime(mime: string) {
-  if (SupportedImages.includes(mime)) {
-    return true;
-  }
-  return false;
-}
-
-export function safeFilename(filename?: string) {
-  let str = filename?.replaceAll("/", "_").replaceAll("\\", "_");
-
-  if (!str) return "unnamed";
-  return str;
-}
