@@ -10,11 +10,24 @@ import { handleDeleteFilesByFileIdsRoute } from './routes/deleteFilesByFileId';
 import { handleDeleteAttachmentByGroupIdRoute } from './routes/deleteAttachmentByGroupId';
 import { handleProxyImageRoute } from './routes/proxyImage';
 import { handleProxyImageDimensionsRoute } from './routes/proxyImageDimensions';
+import { env } from './env';
 
 
 const server = new Server();
 
 
+server.use((req, res, next) => {
+
+
+  res.setHeader("Access-Control-Allow-Origin", "http://local.nerimity.com:3000");
+
+  if (req.method === 'OPTIONS') {
+    res.status(200).end();
+    return;
+  }
+
+  next();
+})
 
 
 handleDeleteAttachmentByGroupIdRoute(server)
@@ -34,8 +47,8 @@ server.all('/*', (req, res) => {
 });
 
 
-server.listen(3000, () => {
-  console.log('Server started on port 3000');
+server.listen(env.port, () => {
+  console.log('Server started on port ' + env.port);
 })
 
 
