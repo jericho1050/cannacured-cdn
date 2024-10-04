@@ -18,8 +18,13 @@ const server = new Server();
 
 server.use((req, res, next) => {
 
+  if (req.headers.origin) {
+    const origin = env.origin.includes(req.headers.origin.toLowerCase()) ? req.headers.origin : "https://nerimity.com";
+    res.setHeader("Access-Control-Allow-Origin", origin);
+  } else {
+    res.setHeader("Access-Control-Allow-Origin", "http://nerimity.com");
+  }
 
-  res.setHeader("Access-Control-Allow-Origin", "http://local.nerimity.com:3000");
 
   if (req.method === 'OPTIONS') {
     res.status(200).end();
