@@ -7,11 +7,21 @@ import path from "path";
 import fs from "fs";
 import { env } from "./env";
 import { removeExpiredFiles } from "./ExpireFileService";
-
+import { connectRedis, redisClient } from "./utils/redis";
+import { handleTimeout } from "@nerimity/mimiqueue";
+import { RedisFlushModes } from "redis";
 const cpus = env.devMode ? 1 : os.cpus().length;
 
-
 if (cluster.isPrimary) {
+  await connectRedis();
+  await redisClient.flushDb(RedisFlushModes.ASYNC);
+  console.log("Connected to redis.");
+
+  handleTimeout({
+    redisClient,
+    prefix: "cdn",
+  });
+
   createFolders();
   removeExpiredVerificationsAtInterval();
   removeExpiredFilesAtInterval();
@@ -20,17 +30,15 @@ if (cluster.isPrimary) {
       cpu: i,
     });
   }
-}
-
-if (cluster.isWorker) {
+} else {
   import("./worker");
 }
 
 // 2 minutes
 const removeExpiredVerificationsInterval = 2 * 60 * 1000;
 async function removeExpiredVerificationsAtInterval() {
-  const results = await removeExpiredVerifications().catch(err => {
-    console.error(err)
+  const results = await removeExpiredVerifications().catch((err) => {
+    console.error(err);
   });
 
   if (results && results.length) {
@@ -38,31 +46,25 @@ async function removeExpiredVerificationsAtInterval() {
       const item = results[i];
       if (!item) continue;
       const filePath = path.join(tempDirPath, item.tempFilename);
-      fs.promises.unlink(filePath).catch(() => { });
+      fs.promises.unlink(filePath).catch(() => {});
     }
 
-    console.log("Removed", results.length, "expired temp files.")
+    console.log("Removed", results.length, "expired temp files.");
   }
   await setTimeout(removeExpiredVerificationsInterval);
   removeExpiredVerificationsAtInterval();
 }
 
-
-
 // 2 minutes
 const removeExpiredFilesInterval = 2 * 60 * 1000;
 async function removeExpiredFilesAtInterval() {
-
-
-  const results = await removeExpiredFiles().catch(err => {
-    console.error(err)
+  const results = await removeExpiredFiles().catch((err) => {
+    console.error(err);
   });
   if (results && results.length) {
-    console.log("Removed", results.length, "expired files.")
+    console.log("Removed", results.length, "expired files.");
   }
-
 
   await setTimeout(removeExpiredFilesInterval);
   removeExpiredFilesAtInterval();
 }
-

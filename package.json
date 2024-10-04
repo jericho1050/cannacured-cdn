@@ -25,6 +25,7 @@
   "license": "ISC",
   "dependencies": {
     "@nerimity/flakeid": "^1.0.3",
+    "@nerimity/mimiqueue": "^1.2.3",
     "@prisma/client": "5.20.0",
     "@types/node": "^22.6.1",
     "get-audio-duration": "^4.0.1",
