@@ -6,7 +6,7 @@ import { handleBannersPostRoute } from './routes/bannerPost';
 import { handleEmojisPostRoute } from './routes/emojiPost';
 import { handleDeleteFileRoute } from './routes/deleteFile';
 import { handleGetFileRoute } from './routes/getFile';
-import { handleDeleteFilesByFileIdsRoute } from './routes/deleteFilesByFileId';
+import { handleDeleteFilesByFileIdsRoute } from './routes/deleteFilesByFileIds';
 import { handleDeleteAttachmentByGroupIdRoute } from './routes/deleteAttachmentByGroupId';
 import { handleProxyImageRoute } from './routes/proxyImage';
 import { handleProxyImageDimensionsRoute } from './routes/proxyImageDimensions';

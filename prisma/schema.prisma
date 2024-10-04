@@ -23,6 +23,9 @@ model WaitingVerification {
   mimetype          String
   animated          Boolean
 
+  width             Int?
+  height            Int?
+
   compressed       Boolean
 
   type               String

@@ -18,7 +18,7 @@ const route = async (req: Request, res: Response) => {
   const groupPath = path.join(attachmentsDirPath, groupId);
 
   if (!fs.existsSync(groupPath)) {
-    return res.status(404).json({ error: "Invalid Path" });
+    return res.status(404).json({ error: "Invalid Path", type: "INVALID_PATH" });
   }
 
   const dir = await fs.promises.opendir(groupPath);

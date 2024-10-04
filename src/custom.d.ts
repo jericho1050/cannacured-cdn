@@ -11,6 +11,8 @@ declare module "hyper-express" {
       filesize: number;
       shouldCompress: boolean;
       compressedFilename?: string;
+      compressedWidth?: number;
+      compressedHeight?: number;
       animated: boolean;
     };
   }

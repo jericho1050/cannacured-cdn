@@ -60,6 +60,8 @@ export const compressImageMiddleware = (opts: Opts) => {
       }
       req.file.filesize = result.filesize;
       req.file.compressedFilename = result.newFilename;
+      req.file.compressedHeight = result.dimensions.height;
+      req.file.compressedWidth = result.dimensions.width;
       req.file.animated = !!result.gif;
       req.file.originalFilename =
         path.parse(req.file.originalFilename).name +

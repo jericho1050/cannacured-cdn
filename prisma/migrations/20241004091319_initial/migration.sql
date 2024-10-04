@@ -7,6 +7,8 @@ CREATE TABLE "WaitingVerification" (
     "filesize" INTEGER NOT NULL,
     "mimetype" TEXT NOT NULL,
     "animated" BOOLEAN NOT NULL,
+    "width" INTEGER,
+    "height" INTEGER,
     "compressed" BOOLEAN NOT NULL,
     "type" TEXT NOT NULL,
     "duration" DOUBLE PRECISION,

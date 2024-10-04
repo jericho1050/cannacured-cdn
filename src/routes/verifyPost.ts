@@ -26,6 +26,7 @@ const route = async (req: Request, res: Response) => {
   const groupId = req.params.groupId as string;
   const fileId = req.params.fileId as string;
   const type = req.query.type as VerificationType;
+  const imageOnly = (req.query.imageOnly as string | undefined) === "true"; // optional true or false  
   if (!type) {
     res.status(400).json({
       error: "Missing type query parameter",
@@ -56,7 +57,8 @@ const route = async (req: Request, res: Response) => {
   const waitingVerification = await findAndDeleteWaitingVerification(
     fileId,
     groupId,
-    type
+    type,
+    imageOnly ? true : undefined
   );
   if (!waitingVerification) {
     res.status(404).json({
@@ -116,6 +118,8 @@ const route = async (req: Request, res: Response) => {
     ...(waitingVerification.duration !== undefined ? { duration: waitingVerification.duration } : {}),
     mimetype: waitingVerification.mimetype,
     compressed: waitingVerification.compressed,
+    width: waitingVerification.width,
+    height: waitingVerification.height,
     expireAt,
   });
 };

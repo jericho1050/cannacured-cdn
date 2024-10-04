@@ -49,6 +49,8 @@ const route = async (req: Request, res: Response) => {
     compressed: !!req.file.compressedFilename,
     filesize: req.file.filesize,
     mimetype: req.file.mimetype,
+    width: req.file.compressedWidth,
+    height: req.file.compressedHeight,
   }).catch((err) => {
     console.error(err);
   });

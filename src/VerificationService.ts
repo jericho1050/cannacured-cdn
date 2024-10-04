@@ -21,6 +21,9 @@ interface Opts {
   filesize: number;
   mimetype: string;
 
+  width?: number;
+  height?: number;
+
   duration?: number
 
   compressed?: boolean;
@@ -39,6 +42,9 @@ export const addToWaitingList = async (opts: Opts) => {
       filesize: opts.filesize,
       duration: opts.duration,
       mimetype: opts.mimetype,
+
+      width: opts.width,
+      height: opts.height,
     },
   });
 };
@@ -71,7 +77,8 @@ export const removeExpiredVerifications = async () => {
 export const findAndDeleteWaitingVerification = async (
   fileId: string,
   groupId: string | undefined,
-  type: VerificationType
+  type: VerificationType,
+  imageOnly?: boolean
 ) => {
   return prisma.waitingVerification
     .delete({
@@ -79,6 +86,7 @@ export const findAndDeleteWaitingVerification = async (
         fileId,
         groupId,
         type,
+        compressed: imageOnly
       },
     })
     .catch(() => undefined);
