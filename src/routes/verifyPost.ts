@@ -109,6 +109,7 @@ const route = async (req: Request, res: Response) => {
 
 
   res.status(200).json({
+    fileId: waitingVerification.fileId,
     path: path.join(
       newPath.relativeDirPath,
       encodeURI(newPath.parsedFilePath.name) + newPath.parsedFilePath.ext
