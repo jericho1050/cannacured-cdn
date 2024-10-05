@@ -27,15 +27,15 @@ export const tempFileMiddleware = (opts?: { image?: boolean }) => {
       if (res.statusCode && res.statusCode < 400) return;
 
       if (writeStream) {
-        fs.promises.unlink(writeStream.path).catch(() => {});
+        fs.promises.unlink(writeStream.path).catch(() => { });
         if (req.file?.compressedFilename) {
-          fs.promises.unlink(req.file.compressedFilename).catch(() => {});
+          fs.promises.unlink(req.file.compressedFilename).catch(() => { });
         }
       }
     });
 
     const userIP = (
-      req.headers["cf-connecting-ip"] || req.headers["x-forwarded-for"]
+      req.headers["cf-connecting-ip"] || req.headers["x-forwarded-for"] || req.ip
     )?.toString();
 
     done = await authQueue.start({ groupName: userIP });
