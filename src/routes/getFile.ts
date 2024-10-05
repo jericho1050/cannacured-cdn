@@ -81,9 +81,9 @@ const route = async (req: Request, res: Response) => {
 
   }
 
+  res.set("Cache-Control", "public, max-age=300");
   if (rawMime.mime.startsWith("image/") || rawMime.mime.startsWith("video/mp4") || rawMime.mime.startsWith("audio/mp3") || rawMime.mime.startsWith("audio/ogg")) {
     const newRawStream = fs.createReadStream(fullPath);
-    res.set("Cache-Control", "public, max-age=1800");
     res.set("Content-Type", rawMime.mime);
     res.set("Accept-Ranges", "bytes");
 
