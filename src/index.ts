@@ -30,6 +30,12 @@ if (cluster.isPrimary) {
       cpu: i,
     });
   }
+
+  cluster.on('exit', (worker, code, signal) => {
+    console.error(`Worker process ${worker.process.pid} died.`);
+    // have to just restart all clusters because of redis cache issues with socket.io online users.
+    process.exit(code);
+  });
 } else {
   import("./worker");
 }
@@ -46,7 +52,7 @@ async function removeExpiredVerificationsAtInterval() {
       const item = results[i];
       if (!item) continue;
       const filePath = path.join(tempDirPath, item.tempFilename);
-      fs.promises.unlink(filePath).catch(() => {});
+      fs.promises.unlink(filePath).catch(() => { });
     }
 
     console.log("Removed", results.length, "expired temp files.");
