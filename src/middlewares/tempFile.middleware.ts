@@ -7,23 +7,16 @@ import { pipeline } from "stream/promises";
 import { bytesToMb } from "../utils/bytes";
 import { env } from "../env";
 import { isImageMime, safeFilename } from "../utils/utils";
-import { AltQueue } from "@nerimity/mimiqueue";
 import { redisClient } from "../utils/redis";
 
-const authQueue = new AltQueue({
-  name: "cdn",
-  prefix: "cdn",
-  redisClient,
-});
+
 
 export const tempFileMiddleware = (opts?: { image?: boolean }) => {
   return async (req: Request, res: Response) => {
-    let done: () => Promise<void> | undefined;
     let writeStream: fs.WriteStream;
     let closed = false;
     res.on("close", () => {
       closed = true;
-      done?.();
       if (res.statusCode && res.statusCode < 400) return;
 
       if (writeStream) {
@@ -34,11 +27,8 @@ export const tempFileMiddleware = (opts?: { image?: boolean }) => {
       }
     });
 
-    const userIP = (
-      req.headers["cf-connecting-ip"] || req.headers["x-forwarded-for"] || req.ip
-    )?.toString();
 
-    done = await authQueue.start({ groupName: userIP });
+
     if (closed) return;
 
     await req

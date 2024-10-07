@@ -7,20 +7,9 @@ import path from "path";
 import fs from "fs";
 import { env } from "./env";
 import { removeExpiredFiles } from "./ExpireFileService";
-import { connectRedis, redisClient } from "./utils/redis";
-import { handleTimeout } from "@nerimity/mimiqueue";
-import { RedisFlushModes } from "redis";
 const cpus = env.devMode ? 1 : os.cpus().length;
 
 if (cluster.isPrimary) {
-  await connectRedis();
-  await redisClient.flushDb(RedisFlushModes.ASYNC);
-  console.log("Connected to redis.");
-
-  handleTimeout({
-    redisClient,
-    prefix: "cdn",
-  });
 
   createFolders();
   removeExpiredVerificationsAtInterval();
