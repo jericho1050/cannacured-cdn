@@ -25,7 +25,7 @@ server.use((req, res, next) => {
       : "https://nerimity.com";
     res.setHeader("Access-Control-Allow-Origin", origin);
   } else {
-    res.setHeader("Access-Control-Allow-Origin", "http://nerimity.com");
+    res.setHeader("Access-Control-Allow-Origin", "https://nerimity.com");
   }
 
   if (req.method === "OPTIONS") {
