@@ -12,8 +12,10 @@ export function handleAttachmentsPostRoute(server: Server) {
   server.post(
     "/attachments/:groupId",
     validGroupIdCheckMiddleware,
-    tempFileMiddleware({ compressOptions: { size: [1920, 1080, "fit"] } }),
-
+    tempFileMiddleware(),
+    compressImageMiddleware({
+      size: [1920, 1080, "fit"],
+    }),
     route,
     { max_body_length: env.attachmentMaxBodyLength }
   );
