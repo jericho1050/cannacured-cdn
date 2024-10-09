@@ -8,10 +8,11 @@ import { bytesToMb } from "../utils/bytes";
 import { env } from "../env";
 import { isImageMime, safeFilename } from "../utils/utils";
 import { redisClient } from "../utils/redis";
+import { compressImageMiddleware, CompressImageOpts } from "./compressImage.middleware";
 
 
-
-export const tempFileMiddleware = (opts?: { image?: boolean }) => {
+// image option forces the file to be an image
+export const tempFileMiddleware = (opts?: { image?: boolean, compressOptions?: CompressImageOpts }) => {
   return async (req: Request, res: Response) => {
     let writeStream: fs.WriteStream;
     let closed = false;
@@ -26,6 +27,7 @@ export const tempFileMiddleware = (opts?: { image?: boolean }) => {
         }
       }
     });
+
 
 
 
@@ -74,6 +76,7 @@ export const tempFileMiddleware = (opts?: { image?: boolean }) => {
           filesize,
           shouldCompress: isImage && filesize <= env.imageMaxBodyLength,
         };
+
       })
       .catch((error) => {
         if (error === "FILES_LIMIT_REACHED") {
@@ -92,5 +95,10 @@ export const tempFileMiddleware = (opts?: { image?: boolean }) => {
             .send("Oops! An uncaught error occurred on our end. " + text);
         }
       });
+
+    if (opts?.compressOptions) {
+      await compressImageMiddleware(opts.compressOptions)(req, res)
+    }
+
   };
 };

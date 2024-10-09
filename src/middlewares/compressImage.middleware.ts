@@ -7,15 +7,17 @@ import {
 } from "../utils/imageMagick";
 import path from "path";
 import { tempDirPath } from "../utils/Folders";
+import { setTimeout } from "timers/promises";
 
-type Opts = Omit<
+export type CompressImageOpts = Omit<
   Omit<Omit<Omit<CompressImageOptions, "tempPath">, "filename">, "newPath">,
   "crop"
 > & {
   allowCrop?: boolean;
 };
-export const compressImageMiddleware = (opts: Opts) => {
+export const compressImageMiddleware = (opts: CompressImageOpts) => {
   return async (req: Request, res: Response) => {
+
     if (req?.file?.shouldCompress) {
       let closed = false;
       res.on("close", () => {

@@ -11,9 +11,10 @@ export function handleBannersPostRoute(server: Server) {
   server.post(
     "/banners/:groupId",
     validGroupIdCheckMiddleware,
-    tempFileMiddleware({ image: true }),
-    compressImageMiddleware({
-      size: [1920, 1080, "fit"],
+    tempFileMiddleware({
+      image: true, compressOptions: {
+        size: [1920, 1080, "fit"],
+      }
     }),
     route,
     { max_body_length: env.imageMaxBodyLength }

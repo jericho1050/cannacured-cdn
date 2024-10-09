@@ -10,10 +10,11 @@ export function handleAvatarsPostRoute(server: Server) {
   server.post(
     "/avatars/:groupId",
     validGroupIdCheckMiddleware,
-    tempFileMiddleware({ image: true }),
-    compressImageMiddleware({
-      size: [200, 200, "fill"],
-      allowCrop: true,
+    tempFileMiddleware({
+      image: true, compressOptions: {
+        size: [200, 200, "fill"],
+        allowCrop: true,
+      }
     }),
     route,
     { max_body_length: env.imageMaxBodyLength }
