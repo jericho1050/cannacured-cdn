@@ -6,23 +6,20 @@ import { Request, Response } from "hyper-express";
 import { env } from "../env";
 import { tempDirPath } from "../utils/Folders";
 import { compressImageMiddleware } from "../middlewares/compressImage.middleware";
-import { getAudioDurationInSeconds } from 'get-audio-duration'
+import { getAudioDurationInSeconds } from "get-audio-duration";
 import { generateId } from "../utils/flake";
-import path from 'path';
-import fs from 'fs';
+import path from "path";
+import fs from "fs";
 import { isImageMime, safeFilename } from "../utils/utils";
 import { pipeline } from "stream/promises";
 
 export function handleUploadRoute(server: Server) {
-  server.post(
-    "/upload",
-    route,
-    { max_body_length: env.attachmentMaxBodyLength }
-  );
+  server.post("/upload", route, {
+    max_body_length: env.attachmentMaxBodyLength,
+  });
 }
 
 const route = async (req: Request, res: Response) => {
-
   const image = req.query.image === "true";
 
   let writeStream: fs.WriteStream;
@@ -32,14 +29,9 @@ const route = async (req: Request, res: Response) => {
     if (res.statusCode && res.statusCode < 400) return;
 
     if (writeStream) {
-      fs.promises.unlink(writeStream.path).catch(() => { });
-      // if (req.file?.compressedFilename) {
-      //   fs.promises.unlink(req.file.compressedFilename).catch(() => { });
-      // }
+      fs.promises.unlink(writeStream.path).catch(() => {});
     }
   });
-
-
 
   if (closed) return;
 
@@ -87,7 +79,6 @@ const route = async (req: Request, res: Response) => {
         shouldCompress: isImage && filesize <= env.imageMaxBodyLength,
       };
 
-
       const result = await addToWaitingList({
         tempFilename,
         fileId,
@@ -99,7 +90,7 @@ const route = async (req: Request, res: Response) => {
         console.error(err);
         res.status(500).json({
           error: "Failed to upload file",
-        })
+        });
       });
 
       if (result) {
@@ -110,9 +101,7 @@ const route = async (req: Request, res: Response) => {
     })
     .catch((error) => {
       if (error === "FILES_LIMIT_REACHED") {
-        return res
-          .status(403)
-          .send("Only one file can be uploaded at a time");
+        return res.status(403).send("Only one file can be uploaded at a time");
       } else if (error === "FIELDS_LIMIT_REACHED") {
         return res
           .status(403)

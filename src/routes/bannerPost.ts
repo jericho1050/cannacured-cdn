@@ -9,7 +9,7 @@ import { tempDirPath } from "../utils/Folders";
 
 export function handleBannersPostRoute(server: Server) {
   server.post(
-    "/banners/:groupId",
+    "/banners/:groupId/:fileId",
     validGroupIdCheckMiddleware,
     tempFileMiddleware({ image: true }),
     compressImageMiddleware({

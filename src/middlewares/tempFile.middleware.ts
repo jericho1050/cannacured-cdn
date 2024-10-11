@@ -10,33 +10,29 @@ import { isImageMime, safeFilename } from "../utils/utils";
 import { redisClient } from "../utils/redis";
 import { prisma } from "../db";
 
-
-
 export const tempFileMiddleware = (opts?: { image?: boolean }) => {
   return async (req: Request, res: Response) => {
     res.on("close", () => {
       if (res.statusCode && res.statusCode < 400) return;
 
       if (req.file?.compressedFilename) {
-        fs.promises.unlink(req.file.compressedFilename).catch(() => { });
+        fs.promises.unlink(req.file.compressedFilename).catch(() => {});
       }
-
     });
 
-
     const fileId = req.params.fileId;
-
 
     const verifyItem = await prisma.waitingVerification.findUnique({
       where: {
         fileId,
+        type: null,
       },
     });
 
     if (!verifyItem) {
       res.status(404).json({
         error: "File not found",
-      })
+      });
       return;
     }
 
@@ -50,8 +46,5 @@ export const tempFileMiddleware = (opts?: { image?: boolean }) => {
       filesize: verifyItem.filesize,
       shouldCompress: verifyItem.shouldCompress || false,
     };
-
-
-
   };
 };
