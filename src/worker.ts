@@ -11,10 +11,8 @@ import { handleDeleteAttachmentByGroupIdRoute } from "./routes/deleteAttachmentB
 import { handleProxyImageRoute } from "./routes/proxyImage";
 import { handleProxyImageDimensionsRoute } from "./routes/proxyImageDimensions";
 import { env } from "./env";
-import { connectRedis } from "./utils/redis";
-
-await connectRedis();
-console.log("Connected to redis.");
+import { handleUploadWsRoute } from "./routes/uploadWs";
+import { handleUploadRoute } from "./routes/uploadPost";
 
 const server = new Server();
 
@@ -29,6 +27,7 @@ server.use((req, res, next) => {
   }
 
   if (req.method === "OPTIONS") {
+    res.setHeader("Access-Control-Allow-Headers", "content-type");
     res.status(200).end();
     return;
   }
@@ -47,6 +46,8 @@ handleEmojisPostRoute(server);
 handleDeleteFileRoute(server);
 handleProxyImageRoute(server);
 handleProxyImageDimensionsRoute(server);
+// handleUploadWsRoute(server);
+handleUploadRoute(server);
 
 server.all("/*", (req, res) => {
   res.status(404).send("Not found");

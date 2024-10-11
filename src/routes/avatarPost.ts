@@ -8,7 +8,7 @@ import { compressImageMiddleware } from "../middlewares/compressImage.middleware
 
 export function handleAvatarsPostRoute(server: Server) {
   server.post(
-    "/avatars/:groupId",
+    "/avatars/:groupId/:fileId",
     validGroupIdCheckMiddleware,
     tempFileMiddleware({ image: true }),
     compressImageMiddleware({

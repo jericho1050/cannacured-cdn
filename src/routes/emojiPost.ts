@@ -9,7 +9,7 @@ import { tempDirPath } from "../utils/Folders";
 
 export function handleEmojisPostRoute(server: Server) {
   server.post(
-    "/emojis",
+    "/emojis/:fileId",
     tempFileMiddleware({ image: true }),
     compressImageMiddleware({
       size: [100, 100, "fit"],
