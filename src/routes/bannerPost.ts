@@ -34,17 +34,20 @@ const route = async (req: Request, res: Response) => {
     return;
   }
 
-  const result = await addToWaitingList({
-    type: VerificationType.BANNER,
-    fileId: req.file.fileId,
-    compressed: true,
-    groupId: req.params.groupId as string,
-    originalFilename: req.file.originalFilename,
-    tempFilename: req.file.tempFilename,
-    animated: req.file.animated,
-    filesize: req.file.filesize,
-    mimetype: req.file.mimetype,
-  }).catch((err) => {
+  const result = await addToWaitingList(
+    {
+      type: VerificationType.BANNER,
+      fileId: req.file.fileId,
+      compressed: true,
+      groupId: req.params.groupId as string,
+      originalFilename: req.file.originalFilename,
+      tempFilename: req.file.tempFilename,
+      animated: req.file.animated,
+      filesize: req.file.filesize,
+      mimetype: req.file.mimetype,
+    },
+    true
+  ).catch((err) => {
     console.error(err);
   });
 
