@@ -12,6 +12,8 @@ import { handleProxyImageRoute } from "./routes/proxyImage";
 import { handleProxyImageDimensionsRoute } from "./routes/proxyImageDimensions";
 import { env } from "./env";
 import { connectRedis } from "./utils/redis";
+import { handleUploadWsRoute } from "./routes/uploadWs";
+import { handleUploadRoute } from "./routes/uploadPost";
 
 await connectRedis();
 console.log("Connected to redis.");
@@ -47,6 +49,8 @@ handleEmojisPostRoute(server);
 handleDeleteFileRoute(server);
 handleProxyImageRoute(server);
 handleProxyImageDimensionsRoute(server);
+// handleUploadWsRoute(server);
+handleUploadRoute(server);
 
 server.all("/*", (req, res) => {
   res.status(404).send("Not found");
