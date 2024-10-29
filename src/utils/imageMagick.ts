@@ -54,6 +54,9 @@ export const compressImage = async (opts: CompressImageOptions) => {
       .repage("+");
   }
 
+  im = im.limit("memory", "800MB");
+  im = im.limit("disk", "800MB");
+
   return asyncWrite(im, newPath)
     .then(async () => {
       const newMetadata = await getMetadata(newPath);
@@ -86,13 +89,15 @@ async function asyncWrite(im: gm.State, filename: string) {
   });
 }
 
-
 interface MiniConvertOptions {
   size?: number | [number, number];
   static?: boolean;
 }
 
-export async function miniConvert(pathOrStream: Readable | string, opts: MiniConvertOptions) {
+export async function miniConvert(
+  pathOrStream: Readable | string,
+  opts: MiniConvertOptions
+) {
   let instance = imageMagick(pathOrStream as unknown as string);
   if (opts.static) instance = instance.selectFrame(0);
   if (opts.size) {
@@ -109,7 +114,7 @@ export async function miniConvert(pathOrStream: Readable | string, opts: MiniCon
     })
     .catch((err) => {
       return [null, err] as const;
-    })
+    });
 }
 
 async function asyncStream(im: gm.State, format: string) {
@@ -121,14 +126,9 @@ async function asyncStream(im: gm.State, format: string) {
   });
 }
 
-
-
-
-
-
 export async function removeFile(path: string) {
   if (!path) return;
-  return await fs.promises.unlink(path).catch((e) => { });
+  return await fs.promises.unlink(path).catch((e) => {});
 }
 
 /**
