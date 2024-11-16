@@ -4,7 +4,7 @@ import { Request, Response } from "hyper-express";
 import path from "path";
 import { isDirectory, publicDirPath } from "../utils/Folders";
 
-import fs from 'fs';
+import fs from "fs";
 import { miniConvert } from "../utils/imageMagick";
 import { getMimeType } from "stream-mime-type";
 import { Readable } from "stream";
@@ -20,35 +20,34 @@ const route = async (req: Request, res: Response) => {
     decodeURI(path.basename(req.path))
   );
 
-  if (decodedPath.includes("../"))
-    return res.status(404).json
+  if (decodedPath.includes("../")) return res.status(404).json;
   const fullPath = path.join(publicDirPath, decodedPath);
 
   const isDir = await isDirectory(fullPath);
   if (isDir) {
-    res.status(404).send('Not found');
+    res.status(404).send("Not found");
 
     return;
   }
 
-  const filesize = await fs.promises.stat(fullPath).then((stats) => stats.size).catch(() => null);
+  const filesize = await fs.promises
+    .stat(fullPath)
+    .then((stats) => stats.size)
+    .catch(() => null);
 
   if (filesize === null) {
-    res.status(404).send('Not found');
+    res.status(404).send("Not found");
     return;
   }
-
 
   const rawStream = fs.createReadStream(fullPath);
   const rawMime = await getMimeType(rawStream as Readable);
   const isRawImage = rawMime.mime?.startsWith("image/");
   const isImageFilesize = filesize <= env.imageMaxBodyLength;
 
-
   if (isImageFilesize && isRawImage) {
     const type = req.query.type as string;
     let size = parseInt(req.query.size as string | "0");
-
 
     if (size >= 1920) {
       size = 1920;
@@ -77,23 +76,20 @@ const route = async (req: Request, res: Response) => {
       stream.pipe(res);
       return;
     }
-
-
   }
 
   res.set("Cache-Control", "public, max-age=300");
-  if (rawMime.mime.startsWith("image/") || rawMime.mime.startsWith("video/mp4") || rawMime.mime.startsWith("audio/mp3") || rawMime.mime.startsWith("audio/ogg")) {
-    const newRawStream = fs.createReadStream(fullPath);
+  if (
+    rawMime.mime.startsWith("image/") ||
+    rawMime.mime.startsWith("video/mp4") ||
+    rawMime.mime.startsWith("audio/mp3") ||
+    rawMime.mime.startsWith("audio/ogg")
+  ) {
     res.set("Content-Type", rawMime.mime);
-    res.set("Accept-Ranges", "bytes");
-    res.set("Content-Length", filesize.toString());
 
-    newRawStream.pipe(res);
+    res.sendFile(fullPath);
     return;
-  };
+  }
 
   res.download(fullPath, path.basename(fullPath));
-
 };
-
-
