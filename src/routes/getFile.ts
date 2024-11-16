@@ -86,6 +86,7 @@ const route = async (req: Request, res: Response) => {
     const newRawStream = fs.createReadStream(fullPath);
     res.set("Content-Type", rawMime.mime);
     res.set("Accept-Ranges", "bytes");
+    res.set("Content-Length", filesize.toString());
 
     newRawStream.pipe(res);
     return;
