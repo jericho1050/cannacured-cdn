@@ -11,7 +11,12 @@ import { Readable } from "stream";
 import { env } from "../env";
 
 export function handleGetFileRoute(server: Server) {
-  server.get("/*", route);
+  server.get("/*", (req, res) => {
+    route(req, res).catch((err) => {
+      res.status(500).json({ error: "Internal server error" });
+      console.error(err);
+    });
+  });
 }
 
 const route = async (req: Request, res: Response) => {
@@ -20,7 +25,8 @@ const route = async (req: Request, res: Response) => {
     decodeURI(path.basename(req.path))
   );
 
-  if (decodedPath.includes("../")) return res.status(404).json;
+  if (decodedPath.includes("../"))
+    return res.status(404).json({ error: "Not found" });
   const fullPath = path.join(publicDirPath, decodedPath);
 
   const isDir = await isDirectory(fullPath);
