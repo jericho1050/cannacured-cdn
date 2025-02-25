@@ -56,7 +56,7 @@ export const compressImage = async (opts: CompressImageOptions) => {
 
   im = im.limit("memory", "512MB");
   im = im.limit("disk", "512MB");
-  im = im.limit("threads", "2");
+  im = im.limit("thread", "2");
 
   return asyncWrite(im, newPath)
     .then(async () => {
