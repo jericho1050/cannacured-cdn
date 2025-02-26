@@ -1,3 +1,4 @@
+console.log("Starting Workers...");
 import os from "os";
 import cluster from "cluster";
 import { createFolders, tempDirPath } from "./utils/Folders";
@@ -31,6 +32,7 @@ if (cluster.isPrimary) {
 // 2 minutes
 const removeExpiredVerificationsInterval = 2 * 60 * 1000;
 async function removeExpiredVerificationsAtInterval() {
+  console.log("removeExpiredVerificationsAtInterval");
   const results = await removeExpiredVerifications().catch((err) => {
     console.error(err);
   });
@@ -52,6 +54,8 @@ async function removeExpiredVerificationsAtInterval() {
 // 2 minutes
 const removeExpiredFilesInterval = 2 * 60 * 1000;
 async function removeExpiredFilesAtInterval() {
+  console.log("removeExpiredFilesAtInterval");
+
   const results = await removeExpiredFiles().catch((err) => {
     console.error(err);
   });

@@ -1,3 +1,4 @@
+console.log("Worker started.");
 import { Server } from "hyper-express";
 import { handleAttachmentsPostRoute } from "./routes/attachmentsPost";
 import { handleVerifyPostRoute } from "./routes/verifyPost";
