@@ -49,7 +49,7 @@ const route = async (req: Request, res: Response) => {
   const rawStream = fs.createReadStream(fullPath);
   const rawMime = await getMimeType(rawStream as Readable);
   const isRawImage = rawMime.mime?.startsWith("image/");
-  const isImageFilesize = filesize <= env.imageMaxBodyLength;
+  const isImageFilesize = filesize / 1024 / 1024 <= 20; // 20mb
 
   if (isImageFilesize && isRawImage) {
     const type = req.query.type as string;
