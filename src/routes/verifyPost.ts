@@ -13,6 +13,7 @@ import { typeToDir, typeToRelativeDir } from "../utils/uploadType";
 import { env } from "../env";
 import { addToExpireList } from "../ExpireFileService";
 import { checkSecretMiddleware } from "../middlewares/checkSecret.middleware";
+import { deleteDirWithFileExclusion } from "../utils/utils";
 
 export function handleVerifyPostRoute(server: Server) {
   server.post("/verify/:groupId/:fileId", checkSecretMiddleware, route);
@@ -102,6 +103,18 @@ const route = async (req: Request, res: Response) => {
       return;
     }
     expireAt = expireFile.expireAt;
+  }
+
+  if (
+    waitingVerification.type === VerificationType.AVATAR ||
+    waitingVerification.type === VerificationType.BANNER
+  ) {
+    deleteDirWithFileExclusion(
+      newPath.dirPath,
+      newPath.parsedFilePath.name + newPath.parsedFilePath.ext
+    ).catch((e) => {
+      console.log(e);
+    });
   }
 
   res.status(200).json({
