@@ -13,4 +13,5 @@ export const env = {
   REDIS_PORT: parseInt(process.env.REDIS_PORT as string),
   REDIS_PASS: process.env.REDIS_PASS as string,
   REDIS_DB: parseInt(process.env.REDIS_DB as string),
+  EXTERNAL_EMBED_SECRET: process.env.EXTERNAL_EMBED_SECRET as string,
 };

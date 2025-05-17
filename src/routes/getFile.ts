@@ -9,6 +9,7 @@ import { miniConvert } from "../utils/imageMagick";
 import { getMimeType } from "stream-mime-type";
 import { Readable } from "stream";
 import { env } from "../env";
+import { decrypt } from "../utils/encryption";
 
 export function handleGetFileRoute(server: Server) {
   server.get("/*", (req, res) => {
@@ -17,9 +18,22 @@ export function handleGetFileRoute(server: Server) {
       console.error(err);
     });
   });
+  server.get("/external-embed/*", (req, res) => {
+    try {
+      const encryptedPath = req.path.split("/").slice(2).join("/");
+      const path = decrypt(encryptedPath, env.EXTERNAL_EMBED_SECRET);
+      route(req, res, path).catch((err) => {
+        res.status(500).json({ error: "Internal server error" });
+        console.error(err);
+      });
+    } catch (err) {
+      res.status(500).json({ error: "Internal server error" });
+      console.error(err);
+    }
+  });
 }
 
-const route = async (req: Request, res: Response) => {
+const route = async (req: Request, res: Response, customPath?: string) => {
   const decodedPath = path.join(
     path.dirname(req.path),
     decodeURI(path.basename(req.path))
