@@ -34,9 +34,10 @@ export function handleGetFileRoute(server: Server) {
 }
 
 const route = async (req: Request, res: Response, customPath?: string) => {
+  const urlPath = customPath || req.path;
   const decodedPath = path.join(
-    path.dirname(req.path),
-    decodeURI(path.basename(req.path))
+    path.dirname(urlPath),
+    decodeURI(path.basename(urlPath))
   );
 
   if (decodedPath.includes("../"))
