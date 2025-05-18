@@ -21,7 +21,10 @@ export function handleGetFileRoute(server: Server) {
   server.get("/external-embed/*", (req, res) => {
     try {
       const encryptedPath = req.path.split("/").slice(2).join("/");
-      const path = decrypt(encryptedPath, env.EXTERNAL_EMBED_SECRET);
+      const path = decrypt(
+        encryptedPath.split(".")[0]!,
+        env.EXTERNAL_EMBED_SECRET
+      );
       route(req, res, path).catch((err) => {
         res.status(500).json({ error: "Internal server error" });
         console.error(err);
