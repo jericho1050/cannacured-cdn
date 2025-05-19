@@ -12,22 +12,22 @@ import { env } from "../env";
 import { decrypt } from "../utils/encryption";
 
 export function handleGetFileRoute(server: Server) {
-  server.get("/external-embed/*", (req, res) => {
-    try {
-      const encryptedPath = req.path.split("/").slice(2).join("/");
-      const path = decrypt(
-        decodeURIComponent(encryptedPath.split("/")[0]!),
-        env.EXTERNAL_EMBED_SECRET
-      );
-      route(req, res, path).catch((err) => {
-        res.status(500).json({ error: "Internal server error" });
-        console.error(err);
-      });
-    } catch (err) {
-      res.status(500).json({ error: "Internal server error" });
-      console.error(err);
-    }
-  });
+  // server.get("/external-embed/*", (req, res) => {
+  //   try {
+  //     const encryptedPath = req.path.split("/").slice(2).join("/");
+  //     const path = decrypt(
+  //       decodeURIComponent(encryptedPath.split("/")[0]!),
+  //       env.EXTERNAL_EMBED_SECRET
+  //     );
+  //     route(req, res, path).catch((err) => {
+  //       res.status(500).json({ error: "Internal server error" });
+  //       console.error(err);
+  //     });
+  //   } catch (err) {
+  //     res.status(500).json({ error: "Internal server error" });
+  //     console.error(err);
+  //   }
+  // });
   server.get("/*", (req, res) => {
     route(req, res).catch((err) => {
       res.status(500).json({ error: "Internal server error" });
