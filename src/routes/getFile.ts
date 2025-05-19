@@ -22,10 +22,10 @@ export function handleGetFileRoute(server: Server) {
     try {
       const encryptedPath = req.path.split("/").slice(2).join("/");
       const path = decrypt(
-        encryptedPath.split(".")[0]!,
+        decodeURIComponent(encryptedPath.split(".")[0]!),
         env.EXTERNAL_EMBED_SECRET
       );
-      route(req, res, decodeURIComponent(path)).catch((err) => {
+      route(req, res, path).catch((err) => {
         res.status(500).json({ error: "Internal server error" });
         console.error(err);
       });
