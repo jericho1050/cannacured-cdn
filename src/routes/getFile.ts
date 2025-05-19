@@ -25,7 +25,7 @@ export function handleGetFileRoute(server: Server) {
         encryptedPath.split(".")[0]!,
         env.EXTERNAL_EMBED_SECRET
       );
-      route(req, res, path).catch((err) => {
+      route(req, res, decodeURIComponent(path)).catch((err) => {
         res.status(500).json({ error: "Internal server error" });
         console.error(err);
       });
