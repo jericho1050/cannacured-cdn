@@ -12,12 +12,6 @@ import { env } from "../env";
 import { decrypt } from "../utils/encryption";
 
 export function handleGetFileRoute(server: Server) {
-  server.get("/*", (req, res) => {
-    route(req, res).catch((err) => {
-      res.status(500).json({ error: "Internal server error" });
-      console.error(err);
-    });
-  });
   server.get("/external-embed/*", (req, res) => {
     try {
       const encryptedPath = req.path.split("/").slice(2).join("/");
@@ -33,6 +27,12 @@ export function handleGetFileRoute(server: Server) {
       res.status(500).json({ error: "Internal server error" });
       console.error(err);
     }
+  });
+  server.get("/*", (req, res) => {
+    route(req, res).catch((err) => {
+      res.status(500).json({ error: "Internal server error" });
+      console.error(err);
+    });
   });
 }
 
