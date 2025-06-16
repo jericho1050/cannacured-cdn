@@ -14,7 +14,6 @@ export function createWriteStream(
     });
 
     stream.once("ready", () => {
-      stream.removeAllListeners();
       resolve([stream, null]);
     });
   });
@@ -29,7 +28,6 @@ export function createReadStream(path: string): Promise<Result<fs.ReadStream>> {
     });
 
     stream.once("ready", () => {
-      stream.removeAllListeners();
       resolve([stream, null]);
     });
   });
