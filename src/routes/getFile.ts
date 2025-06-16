@@ -10,7 +10,7 @@ import { getMimeType } from "stream-mime-type";
 import { Readable } from "stream";
 import { env } from "../env";
 import { decrypt } from "../utils/encryption";
-import { catchSync } from "../utils/catchSync";
+import { createReadStream } from "../utils/createStream";
 
 export function handleGetFileRoute(server: Server) {
   server.get("/external-embed/*", (req, res) => {
@@ -65,9 +65,7 @@ const route = async (req: Request, res: Response, customPath?: string) => {
     return;
   }
 
-  const [rawStream, rawStreamErr] = catchSync(() =>
-    fs.createReadStream(fullPath)
-  );
+  const [rawStream, rawStreamErr] = await createReadStream(fullPath);
 
   if (rawStreamErr) {
     return res.status(404).json({ error: "Not found" });

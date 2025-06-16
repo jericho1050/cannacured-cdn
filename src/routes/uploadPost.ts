@@ -12,7 +12,7 @@ import path from "path";
 import fs from "fs";
 import { isImageMime, safeFilename } from "../utils/utils";
 import { pipeline } from "stream/promises";
-import { catchSync } from "../utils/catchSync";
+import { createWriteStream } from "../utils/createStream";
 
 export function handleUploadRoute(server: Server) {
   server.post("/upload", route, {
@@ -57,9 +57,8 @@ const route = async (req: Request, res: Response) => {
       // limit_rate_after 500k;
       // or limit_rate 20k;
       // https://www.tecmint.com/nginx-bandwidth-limit/#:~:text=a%20location%20block%E2%80%9D.-,limit_rate_after%20500k%3B,-Here%20is%20an
-      const [_writeStream, writeStreamErr] = catchSync(() =>
-        fs.createWriteStream(tempPath)
-      );
+      const [_writeStream, writeStreamErr] = await createWriteStream(tempPath);
+
       if (writeStreamErr) {
         res.status(500).json({
           error: "Failed to upload file",
