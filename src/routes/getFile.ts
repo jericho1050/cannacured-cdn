@@ -115,11 +115,16 @@ const route = async (req: Request, res: Response, customPath?: string) => {
     rawMime.mime.startsWith("audio/mp3") ||
     rawMime.mime.startsWith("audio/ogg")
   ) {
-    res.set("Content-Type", rawMime.mime);
 
-    res.sendFile(fullPath);
+    res.setHeader("Content-Type", rawMime.mime);
+
+    rawStream.pipe(res);
     return;
   }
 
-  res.download(fullPath, path.basename(fullPath));
+  res.setHeader('Content-Disposition', `attachment; filename="${path.basename(fullPath)}"`);
+  res.setHeader("Content-Type", rawMime.mime);
+
+  rawStream.pipe(res);
+
 };
