@@ -117,9 +117,12 @@ const route = async (req: Request, res: Response, customPath?: string) => {
   ) {
     res.set("Content-Type", rawMime.mime);
 
-    res.sendFile(fullPath);
+    // res.sendFile(fullPath);
+    rawMime.stream.pipe(res);
     return;
   }
 
-  res.download(fullPath, path.basename(fullPath));
+  res.setHeader("Content-Type", `application/octet-stream; charset=UTF-8`);
+  
+  rawMime.stream.pipe(res);
 };
