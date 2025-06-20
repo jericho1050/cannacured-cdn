@@ -11,6 +11,7 @@ import { Readable } from "stream";
 import { env } from "../env";
 import { decrypt } from "../utils/encryption";
 import { createReadStream } from "../utils/createStream";
+import { pipeline } from "stream/promises";
 
 export function handleGetFileRoute(server: Server) {
   server.get("/external-embed/*", (req, res) => {
@@ -116,13 +117,14 @@ const route = async (req: Request, res: Response, customPath?: string) => {
     rawMime.mime.startsWith("audio/ogg")
   ) {
     res.set("Content-Type", rawMime.mime);
-
-    // res.sendFile(fullPath);
-    rawMime.stream.pipe(res);
-    return;
+  } else {
+    res.set("Content-Type", `application/octet-stream; charset=UTF-8`);
   }
 
-  res.setHeader("Content-Type", `application/octet-stream; charset=UTF-8`);
+  await pipeline(rawMime.stream, res).catch((err) => {
+    res.end("Error streaming file.")
+    res.destroy();
+    console.error(err)
+  });
   
-  rawMime.stream.pipe(res);
 };
