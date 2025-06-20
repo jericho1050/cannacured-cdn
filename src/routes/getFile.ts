@@ -103,7 +103,13 @@ const route = async (req: Request, res: Response, customPath?: string) => {
       res.set("Accept-Ranges", "bytes");
       res.set("Content-Type", mime || "image/webp");
 
-      stream.pipe(res);
+      stream.pipe(res).on("error", () => {
+        if (!res.headersSent) {
+            res.end('Error streaming file.');
+        } else {
+          res.destroy();
+        }
+      })
       return;
     }
   }
@@ -120,5 +126,11 @@ const route = async (req: Request, res: Response, customPath?: string) => {
     res.set("Content-Type", `application/octet-stream; charset=UTF-8`);
   }
 
-  rawMime.stream.pipe(res);
+  rawMime.stream.pipe(res).on("error", () => {
+    if (!res.headersSent) {
+        res.end('Error streaming file.');
+    } else {
+      res.destroy();
+    }
+  })
 };
