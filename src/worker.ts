@@ -16,11 +16,6 @@ import { handleUploadRoute } from "./routes/uploadPost";
 
 const server = new Server();
 
-server.set_error_handler((req, res, err) => {
-  console.error(err);
-  res.status(500).json({ error: "Internal server error" });
-});
-
 server.use((req, res, next) => {
   if (req.headers.origin) {
     const origin = env.origin.includes(req.headers.origin.toLowerCase())
