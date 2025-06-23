@@ -33,7 +33,7 @@ const route = async (req: Request, res: Response) => {
 
   const protocol = urlRes.url.startsWith("https") ? https : http;
 
-  protocol.get(urlRes.url, async (imageRes) => {
+  const imageReq = protocol.get(urlRes.url, async (imageRes) => {
     if (type === "webp") {
       const [stream, error] = await miniConvert(imageRes, { static: true });
 
@@ -49,6 +49,9 @@ const route = async (req: Request, res: Response) => {
       return;
     }
     imageRes.pipe(res);
+  });
+  imageReq.on("error", () => {
+    res.status(403).end()
   });
 }
 
