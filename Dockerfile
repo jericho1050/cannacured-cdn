@@ -1,5 +1,5 @@
 # Use an official Node.js runtime as a parent image
-FROM node:22-slim
+FROM node:22-bullseye-slim
 
 # Install system dependencies, including ImageMagick
 # Run as root to install packages, then switch back to the node user
