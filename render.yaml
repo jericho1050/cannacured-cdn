@@ -1,10 +1,7 @@
 services:
   - type: web
     name: cannacured-cdn
-    env: node
     plan: free
-    buildCommand: "pnpm install && pnpm build && apt-get update && apt-get install -y imagemagick"
-    startCommand: "node dist/index.js"
     healthCheckPath: /
     envVars:
       - key: DATABASE_URL
