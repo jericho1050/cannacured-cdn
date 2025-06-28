@@ -28,7 +28,7 @@ services:
       - key: DEV_MODE
         value: false
       - key: ORIGIN
-        value: "https://your-frontend-domain.com" # Change this to your frontend's URL
+        value: "https://chat.cannacured.com" # Change this to your frontend's URL
       - key: EXTERNAL_EMBED_SECRET
         generateValue: true # Automatically generates a secure secret
 
