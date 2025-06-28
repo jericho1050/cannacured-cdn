@@ -1,6 +1,7 @@
 services:
   - type: web
     name: cannacured-cdn
+    runtime: docker
     plan: free
     healthCheckPath: /
     envVars:
