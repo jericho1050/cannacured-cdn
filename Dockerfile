@@ -27,8 +27,10 @@ RUN pnpm prisma generate
 # Build the application
 RUN pnpm build
 
-# Create the temp directory and change ownership to the node user
-RUN mkdir /usr/src/app/temp && chown node:node /usr/src/app/temp
+# Change ownership of the entire application directory to the node user.
+# This ensures the app, running as the 'node' user, has permissions to
+# create, delete, and modify files and directories as needed.
+RUN chown -R node:node /usr/src/app
 
 # Your app will run as the non-root 'node' user
 USER node
