@@ -11,11 +11,21 @@ services:
         fromDatabase:
           name: cannacured-db
           property: connectionString
-      - key: REDIS_URL
+      - key: REDIS_HOST
         fromService:
           type: redis
           name: cannacured-redis
-          envVarKey: REDIS_URL
+          property: host
+      - key: REDIS_PORT
+        fromService:
+          type: redis
+          name: cannacured-redis
+          property: port
+      - key: REDIS_PASS
+        fromService:
+          type: redis
+          name: cannacured-redis
+          property: password
       - key: PORT
         value: 8003
       - key: ATTACHMENT_MAX_BODY_LENGTH
