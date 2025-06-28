@@ -27,7 +27,7 @@ services:
       - key: DEV_MODE
         value: false
       - key: ORIGIN
-        value: '["https://chat.cannacured.com"]'
+        value: "https://chat.cannacured.com"
       - key: EXTERNAL_EMBED_SECRET
         generateValue: true
   - type: redis
