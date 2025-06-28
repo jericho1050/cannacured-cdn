@@ -32,10 +32,10 @@ services:
       - key: EXTERNAL_EMBED_SECRET
         generateValue: true # Automatically generates a secure secret
 
-  - type: postgres
-    name: nerimity-db
+databases:
+  - name: nerimity-db
     plan: free # Or your preferred plan
 
-  - type: redis
-    name: nerimity-redis
+redis:
+  - name: nerimity-redis
     plan: free # Or your preferred plan 
