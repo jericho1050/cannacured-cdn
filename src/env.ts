@@ -1,6 +1,25 @@
+function parseOrigin(originEnv: string | undefined): string[] {
+  if (!originEnv) {
+    // Default to a safe value or handle as an error if required
+    return ["https://nerimity.com"]; 
+  }
+  try {
+    // Assumes the value is a JSON array string like '["http://a.com", "http://b.com"]'
+    const parsed = JSON.parse(originEnv);
+    if (Array.isArray(parsed)) {
+      return parsed;
+    }
+    // If it's some other valid JSON, return empty array
+    return [];
+  } catch (e) {
+    // If parsing fails, assume it's a single URL string
+    return [originEnv];
+  }
+}
+
 export const env = {
   port: parseInt(process.env.PORT!),
-  origin: JSON.parse(process.env.ORIGIN!) as string[],
+  origin: parseOrigin(process.env.ORIGIN),
   attachmentMaxBodyLength:
     parseInt(process.env.ATTACHMENT_MAX_BODY_LENGTH!) * (1024 * 1024),
   imageMaxBodyLength:
