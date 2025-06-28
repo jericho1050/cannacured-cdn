@@ -32,7 +32,7 @@ services:
       - key: EXTERNAL_EMBED_SECRET
         generateValue: true # Automatically generates a secure secret
 
-  - type: psql
+  - type: postgres
     name: nerimity-db
     plan: free # Or your preferred plan
 
