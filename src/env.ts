@@ -9,9 +9,6 @@ export const env = {
   secret: process.env.SECRET!,
   devMode: process.env.DEV_MODE?.toLowerCase() === "true",
   databaseUrl: process.env.DATABASE_URL!,
-  REDIS_HOST: process.env.REDIS_HOST as string,
-  REDIS_PORT: parseInt(process.env.REDIS_PORT as string),
-  REDIS_PASS: process.env.REDIS_PASS as string,
-  REDIS_DB: parseInt(process.env.REDIS_DB as string),
+  REDIS_URL: process.env.REDIS_URL as string,
   EXTERNAL_EMBED_SECRET: process.env.EXTERNAL_EMBED_SECRET as string,
 };

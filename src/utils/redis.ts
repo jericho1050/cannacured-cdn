@@ -2,12 +2,7 @@ import { createClient } from "redis";
 import { env } from "../env";
 
 export const redisClient = createClient({
-  socket: {
-    host: env.REDIS_HOST,
-    port: env.REDIS_PORT,
-  },
-  database: env.REDIS_DB,
-  password: env.REDIS_PASS,
+  url: env.REDIS_URL,
 });
 
 export function connectRedis(): Promise<typeof redisClient> {
