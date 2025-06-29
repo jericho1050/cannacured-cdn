@@ -35,6 +35,11 @@ server.use((req, res, next) => {
   next();
 });
 
+// Health check route for Render
+server.get("/", (req, res) => {
+  res.send("OK");
+});
+
 handleDeleteAttachmentByGroupIdRoute(server);
 handleDeleteFilesByFileIdsRoute(server);
 handleGetFileRoute(server);
