@@ -1,15 +1,13 @@
-function parseOrigin(originEnv: string | undefined): string[] {
-  if (!originEnv) {
-    // Default to a safe value if the variable is not set
-    return ["https://nerimity.com"];
+const origin = (): string | string[] => {
+  if (!process.env.ORIGIN) {
+    
+    return '*';
   }
-
-  // Handle comma-separated origins. This is easier to manage in Render env vars
-  // and avoids JSON parsing errors.
-  // Example: "https://a.com, https://b.com"
-  // We also convert to lower case to ensure case-insensitive matching.
-  return originEnv.split(',').map(url => url.trim().toLowerCase());
-}
+  if (process.env.ORIGIN.startsWith('[')) {
+    return JSON.parse(process.env.ORIGIN);
+  }
+  return process.env.ORIGIN;
+};
 
 function getRedisUrl(): string {
   if (process.env.REDIS_URL) {
@@ -26,7 +24,7 @@ function getRedisUrl(): string {
 
 export const env = {
   port: parseInt(process.env.PORT || '8003', 10),
-  origin: parseOrigin(process.env.ORIGIN),
+  origin: origin(),
   attachmentMaxBodyLength:
     (parseInt(process.env.ATTACHMENT_MAX_BODY_LENGTH || '50', 10)) * (1024 * 1024),
   imageMaxBodyLength:

@@ -20,10 +20,10 @@ server.use((req, res, next) => {
   if (req.headers.origin) {
     const origin = env.origin.includes(req.headers.origin.toLowerCase())
       ? req.headers.origin
-      : "https://nerimity.com";
+      : "https://cannacured-web.onrender.com";
     res.setHeader("Access-Control-Allow-Origin", origin);
   } else {
-    res.setHeader("Access-Control-Allow-Origin", "https://nerimity.com");
+    res.setHeader("Access-Control-Allow-Origin", "https://cannacured-web.onrender.com");
   }
 
   if (req.method === "OPTIONS") {
