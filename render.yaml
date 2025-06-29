@@ -18,9 +18,9 @@ services:
           property: connectionString
   - type: redis
     name: cannacured-redis
-    plan: free
+    plan: starter
     ipAllowList: []
 
 databases:
   - name: cannacured-db
-    plan: free
+    plan: Basic-1gb
