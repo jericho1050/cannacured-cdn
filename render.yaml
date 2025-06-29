@@ -2,7 +2,7 @@ services:
   - type: web
     name: cannacured-cdn
     runtime: docker
-    plan: free
+    plan: starter
     healthCheckPath: /
     envVars:
       - fromGroup: cannacured-shared-env
