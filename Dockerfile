@@ -39,4 +39,4 @@ USER node
 EXPOSE 8003
 
 # Define the command to run your app
-CMD ["node", "dist/index.js"] 
+CMD ["pnpm", "start"] 
