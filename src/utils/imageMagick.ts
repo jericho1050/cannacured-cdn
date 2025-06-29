@@ -5,9 +5,10 @@ import { getMetadata } from "./sharp";
 import { Readable } from "stream";
 import { env } from "../env";
 
-const gmOptions: gm.SubClassOptions = {
+const gmOptions: gm.ClassOptions = {
   imageMagick: true,
 };
+
 
 // In production (not dev mode), we explicitly set the path for ImageMagick.
 // This is necessary because of the containerized environment.
