@@ -27,6 +27,10 @@ RUN pnpm prisma generate
 # Build the application
 RUN pnpm build
 
+# Copy the entrypoint script
+COPY entrypoint.sh .
+RUN chmod +x entrypoint.sh
+
 # Change ownership of the entire application directory to the node user.
 # This ensures the app, running as the 'node' user, has permissions to
 # create, delete, and modify files and directories as needed.
@@ -39,4 +43,4 @@ USER node
 EXPOSE 8003
 
 # Define the command to run your app
-CMD ["pnpm", "start"] 
+CMD ["./entrypoint.sh"] 
