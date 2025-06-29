@@ -1,20 +1,14 @@
 function parseOrigin(originEnv: string | undefined): string[] {
   if (!originEnv) {
-    // Default to a safe value or handle as an error if required
-    return ["https://nerimity.com"]; 
+    // Default to a safe value if the variable is not set
+    return ["https://nerimity.com"];
   }
-  try {
-    // Assumes the value is a JSON array string like '["http://a.com", "http://b.com"]'
-    const parsed = JSON.parse(originEnv);
-    if (Array.isArray(parsed)) {
-      return parsed;
-    }
-    // If it's some other valid JSON, return empty array
-    return [];
-  } catch (e) {
-    // If parsing fails, assume it's a single URL string
-    return [originEnv];
-  }
+
+  // Handle comma-separated origins. This is easier to manage in Render env vars
+  // and avoids JSON parsing errors.
+  // Example: "https://a.com, https://b.com"
+  // We also convert to lower case to ensure case-insensitive matching.
+  return originEnv.split(',').map(url => url.trim().toLowerCase());
 }
 
 function getRedisUrl(): string {
