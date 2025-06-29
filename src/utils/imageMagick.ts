@@ -3,8 +3,19 @@ import fs from "fs";
 import path from "path";
 import { getMetadata } from "./sharp";
 import { Readable } from "stream";
+import { env } from "../env";
 
-const imageMagick = gm.subClass({ imageMagick: "7+" });
+const gmOptions: gm.SubClassOptions = {
+  imageMagick: true,
+};
+
+// In production (not dev mode), we explicitly set the path for ImageMagick.
+// This is necessary because of the containerized environment.
+if (!env.devMode) {
+  gmOptions.appPath = "/usr/bin/";
+}
+
+const imageMagick = gm.subClass(gmOptions);
 
 export interface CompressImageOptions {
   tempPath: string;
@@ -78,6 +89,7 @@ export const compressImage = async (opts: CompressImageOptions) => {
       ] as const;
     })
     .catch((err) => {
+      console.error("ImageMagick compression error:", err);
       return [null, "Something went wrong while compressing image."] as const;
     });
 };
