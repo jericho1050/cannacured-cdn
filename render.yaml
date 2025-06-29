@@ -4,7 +4,6 @@ services:
     runtime: docker
     plan: free
     healthCheckPath: /
-    startCommand: "pnpm prisma migrate deploy && pnpm start"
     envVars:
       - key: DATABASE_URL
         fromDatabase:
