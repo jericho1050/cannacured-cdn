@@ -5,7 +5,8 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "start": "tsup --onSuccess \"node --env-file=.env --enable-source-maps dist/index.js\"",
+    "start": "node --enable-source-maps dist/index.js",
+    "start:dev": "tsup --watch --onSuccess \"node --env-file=.env --enable-source-maps dist/index.js\"",
     "bundle": "tsup",
     "dev": "tsup --watch --onSuccess \"node --env-file=.env --enable-source-maps dist/index.js\"",
     "build": "pnpm bundle",
