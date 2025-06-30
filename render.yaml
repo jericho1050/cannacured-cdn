@@ -2,8 +2,12 @@ services:
   - type: web
     name: cannacured-cdn
     runtime: docker
-    plan: starter
+    plan: standard
     healthCheckPath: /
+    disk:
+      name: canna-storage
+      mountPath: /usr/src/app/storage
+      sizeGB: 10
     envVars:
       - fromGroup: cannacured-shared-env
       # 2. Add the DYNAMIC links to the infrastructure
