@@ -12,7 +12,9 @@ export const DirNames = {
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-export const publicDirPath = path.join(__dirname, "../", "public");
+// Use an absolute path to the mounted disk for persistent storage.
+// The '/usr/src/app/storage' path is where our Render Disk is mounted.
+export const publicDirPath = path.resolve("/usr/src/app/storage");
 
 export const tempDirPath = path.join(__dirname, "../", "temp");
 export const avatarsDirPath = path.join(publicDirPath, DirNames.ProfileAvatar);
