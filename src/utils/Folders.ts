@@ -14,7 +14,11 @@ const __dirname = path.dirname(__filename);
 
 // Use an absolute path to the mounted disk for persistent storage.
 // The '/usr/src/app/storage' path is where our Render Disk is mounted.
-export const publicDirPath = path.resolve("/usr/src/app/storage");
+export let publicDirPath = path.resolve("/usr/src/app/storage");
+
+if (process.env.DEV_MODE) {
+  publicDirPath = path.join(__dirname, "../", "public");
+}
 
 export const tempDirPath = path.join(__dirname, "../", "temp");
 export const avatarsDirPath = path.join(publicDirPath, DirNames.ProfileAvatar);
@@ -43,9 +47,6 @@ export function createFolders() {
     fs.mkdirSync(emojisDirPath, { recursive: true });
   }
 }
-
-
-
 
 export async function isDirectory(path: string) {
   if (!path) return false;
