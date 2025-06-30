@@ -11,6 +11,7 @@ import { removeExpiredFiles } from "./ExpireFileService";
 const cpus = env.devMode ? 1 : os.cpus().length;
 
 if (cluster.isPrimary) {
+  console.log(`[STARTUP] About to call createFolders. Temp directory path is: ${tempDirPath}`);
   createFolders();
   removeExpiredVerificationsAtInterval();
   removeExpiredFilesAtInterval();

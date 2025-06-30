@@ -59,6 +59,7 @@ const route = async (req: Request, res: Response) => {
     imageOnly ? true : undefined
   );
   if (!waitingVerification) {
+    console.log(`[VERIFY-FAIL] waitingVerification not found for fileId: ${fileId}, groupId: ${groupId}, type: ${type}`);
     res.status(404).json({
       error: "Not found",
     });
@@ -72,16 +73,29 @@ const route = async (req: Request, res: Response) => {
     newPath.parsedFilePath.name + newPath.parsedFilePath.ext
   );
 
+  console.log('[VERIFY-INFO] Preparing to move file.', {
+    fileId: waitingVerification.fileId,
+    tempPath: tempPath,
+    destinationPath: fullPath,
+  });
+
   try {
     await fs.promises.mkdir(newPath.dirPath, { recursive: true });
     await fs.promises.rename(tempPath, fullPath);
-  } catch {
+    console.log(`[VERIFY-SUCCESS] Successfully moved file: ${fullPath}`);
+  } catch (err) {
+    console.error('[VERIFY-CRITICAL] Failed to move file.', {
+      error: err,
+      tempPath: tempPath,
+      destinationPath: fullPath,
+    });
     fs.promises.unlink(tempPath).catch(() => {});
     fs.promises.unlink(fullPath).catch(() => {});
 
     res.status(500).json({
       error: "Internal server error.",
     });
+    return;
   }
 
   let expireAt: number | undefined = undefined;
