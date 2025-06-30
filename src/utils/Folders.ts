@@ -16,7 +16,7 @@ const __dirname = path.dirname(__filename);
 // The '/usr/src/app/storage' path is where our Render Disk is mounted.
 export let publicDirPath = path.resolve("/usr/src/app/storage");
 
-if (process.env.DEV_MODE) {
+if (process.env.DEV_MODE?.toLowerCase() === "true") {
   publicDirPath = path.join(__dirname, "../", "public");
 }
 
@@ -30,8 +30,11 @@ export const attachmentsDirPath = path.join(
 export const emojisDirPath = path.join(publicDirPath, DirNames.Emojis);
 
 export function createFolders() {
-  fs.rmSync(tempDirPath, { recursive: true, force: true });
-  fs.mkdirSync(tempDirPath, { recursive: true });
+  // fs.rmSync(tempDirPath, { recursive: true, force: true });
+  // fs.mkdirSync(tempDirPath, { recursive: true });
+  if (!fs.existsSync(tempDirPath)) {
+    fs.mkdirSync(tempDirPath, { recursive: true });
+  }
 
   if (!fs.existsSync(avatarsDirPath)) {
     fs.mkdirSync(avatarsDirPath, { recursive: true });
