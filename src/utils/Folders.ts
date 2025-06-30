@@ -20,7 +20,7 @@ if (process.env.DEV_MODE) {
   publicDirPath = path.join(__dirname, "../", "public");
 }
 
-export const tempDirPath = path.join(publicDirPath, "../", "temp");
+export const tempDirPath = path.join(publicDirPath, "temp");
 export const avatarsDirPath = path.join(publicDirPath, DirNames.ProfileAvatar);
 export const bannersDirPath = path.join(publicDirPath, DirNames.ProfileBanner);
 export const attachmentsDirPath = path.join(
