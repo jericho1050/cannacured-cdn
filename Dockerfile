@@ -1,10 +1,10 @@
 # Use an official Node.js runtime as a parent image
 FROM node:22-bullseye-slim
 
-# Install system dependencies, including ImageMagick
+# Install system dependencies, including ImageMagick and FFmpeg
 # Run as root to install packages, then switch back to the node user
 USER root
-RUN apt-get update && apt-get install -y --no-install-recommends imagemagick && \
+RUN apt-get update && apt-get install -y --no-install-recommends imagemagick ffmpeg && \
     rm -rf /var/lib/apt/lists/*
 
 # Install pnpm

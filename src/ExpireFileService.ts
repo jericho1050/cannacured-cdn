@@ -33,22 +33,30 @@ export const removeExpiredFiles = async () => {
     },
   });
 
+  if (results.length) {
+    console.log('[EXPIRE] about to delete', {
+      count: results.length,
+      fileIds: results.map(r => r.fileId)
+    });
+  }
+
   const deletedResults = await Promise.all(results.map(async (item) => {
     const filePath = path.join(attachmentsDirPath, item.groupId, item.fileId);
-    const res = await fs.promises.rm(filePath, { recursive: true }).then(() => true).catch(err => {
+    const res = await fs.promises.rm(filePath, { recursive: true }).then(() => {
+      console.log('[EXPIRE] deleted directory', { filePath });
+      return true;
+    }).catch(err => {
       if (err.code === "ENOENT") {
+        console.log('[EXPIRE] directory not found (already deleted)', { filePath });
         return true;
       }
-      console.error(err);
+      console.error('[EXPIRE] failed to delete', { filePath, error: err });
       return false;
-    })
-    if (res) {
-      return item;
-    }
+    });
+    if (res) return item;
   }));
 
-  const fileIds = deletedResults.filter((item) => item).map((item) => item!.fileId);
-
+  const fileIds = deletedResults.filter(Boolean).map((item) => item!.fileId);
 
   await prisma.expireFile.deleteMany({
     where: {
