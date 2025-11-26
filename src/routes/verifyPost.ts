@@ -14,6 +14,7 @@ import { env } from "../env";
 import { addToExpireList } from "../ExpireFileService";
 import { checkSecretMiddleware } from "../middlewares/checkSecret.middleware";
 import { deleteDirWithFileExclusion } from "../utils/utils";
+import { processVideo } from "../utils/videoProcessing";
 
 export function handleVerifyPostRoute(server: Server) {
   server.post("/verify/:groupId/:fileId", checkSecretMiddleware, route);
@@ -65,6 +66,9 @@ const route = async (req: Request, res: Response) => {
     });
     return;
   }
+
+  console.log('[VERIFY-DEBUG] Received verification request with data:', waitingVerification);
+
   const tempPath = path.join(tempDirPath, waitingVerification.tempFilename);
   const newPath = getFilePathFromVerificationType(waitingVerification);
 
@@ -98,9 +102,20 @@ const route = async (req: Request, res: Response) => {
     return;
   }
 
+  const isVideo = waitingVerification.mimetype.startsWith("video/");
+  const shouldExpire = !waitingVerification.compressed && !isVideo;
+
   let expireAt: number | undefined = undefined;
 
-  if (!waitingVerification.compressed) {
+  console.log('[VERIFY-EXPIRE] decision', {
+    fileId: waitingVerification.fileId,
+    mimetype: waitingVerification.mimetype,
+    compressed: !!waitingVerification.compressed,
+    isVideo,
+    shouldExpire
+  });
+
+  if (shouldExpire) {
     const expireFile = await addToExpireList({
       fileId: waitingVerification.fileId,
       groupId: waitingVerification.groupId!,
@@ -109,14 +124,51 @@ const route = async (req: Request, res: Response) => {
     });
 
     if (!expireFile) {
-      res.status(500).json({
-        error: "Failed to add to expire list",
-      });
+      res.status(500).json({ error: "Failed to add to expire list" });
       fs.promises.unlink(tempPath).catch(() => {});
       fs.promises.unlink(fullPath).catch(() => {});
       return;
     }
     expireAt = expireFile.expireAt;
+    console.log('[VERIFY-EXPIRE] added to expire list', {
+      fileId: waitingVerification.fileId,
+      expireAt
+    });
+  }
+
+  let thumbnailPath: string | undefined = undefined;
+  
+  if (isVideo) {
+    console.log('[VERIFY-DEBUG] Video file moved. Starting video processing...');
+    
+    // Process the video: extract metadata and generate thumbnail
+    const videoMetadata = await processVideo({
+      inputPath: fullPath,
+      outputDir: newPath.dirPath,
+      fileId: waitingVerification.fileId,
+    });
+
+    if (videoMetadata) {
+      // Update waitingVerification object with video metadata
+      waitingVerification.width = videoMetadata.width;
+      waitingVerification.height = videoMetadata.height;
+      // Duration should already be set from the upload stage, but update if needed
+      if (!waitingVerification.duration && videoMetadata.duration) {
+        waitingVerification.duration = videoMetadata.duration;
+      }
+      
+      // Set thumbnail path for client
+      if (videoMetadata.thumbnailPath) {
+        const thumbnailFilename = `${waitingVerification.fileId}_thumbnail.jpg`;
+        thumbnailPath = path
+          .join(newPath.relativeDirPath, thumbnailFilename)
+          .replaceAll("\\", "/");
+      }
+      
+      console.log('[VERIFY-DEBUG] Video processing completed successfully.');
+    } else {
+      console.log('[VERIFY-DEBUG] Video processing failed, continuing without metadata.');
+    }
   }
 
   if (
@@ -150,6 +202,7 @@ const route = async (req: Request, res: Response) => {
     width: waitingVerification.width,
     height: waitingVerification.height,
     expireAt,
+    ...(thumbnailPath ? { thumbnailPath } : {}),
   });
 };
 
