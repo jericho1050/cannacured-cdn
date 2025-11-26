@@ -2,6 +2,7 @@
 FROM node:22-bullseye-slim
 
 # Install system dependencies, including ImageMagick and ffmpeg (for video thumbnails)
+# Cache bust: 2025-11-26-v2
 # Run as root to install packages, then switch back to the node user
 USER root
 RUN apt-get update && apt-get install -y --no-install-recommends imagemagick ffmpeg && \
