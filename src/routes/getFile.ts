@@ -117,9 +117,8 @@ const route = async (req: Request, res: Response, customPath?: string) => {
   res.set("Cache-Control", "public, max-age=300");
   if (
     rawMime.mime.startsWith("image/") ||
-    rawMime.mime.startsWith("video/mp4") ||
-    rawMime.mime.startsWith("audio/mp3") ||
-    rawMime.mime.startsWith("audio/ogg")
+    rawMime.mime.startsWith("video/") ||
+    rawMime.mime.startsWith("audio/")
   ) {
     res.set("Content-Type", rawMime.mime);
   } else {
