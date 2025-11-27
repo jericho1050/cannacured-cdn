@@ -66,12 +66,20 @@ export const compressImage = async (opts: CompressImageOptions) => {
       .repage("+");
   }
 
-  im = im.limit("memory", "512MB");
-  im = im.limit("disk", "512MB");
-  im = im.out("-limit", "thread", "2");
+  im = im.limit("memory", "2GB");
+  im = im.limit("disk", "2GB");
+  im = im.limit("map", "1GB");
+  im = im.out("-limit", "thread", "4");
 
 
-  return asyncWrite(im, newPath)
+  // Add timeout for large files (60 seconds)
+  const timeoutPromise = new Promise<readonly [null, string]>((resolve) => {
+    setTimeout(() => {
+      resolve([null, "Image compression timed out. File may be too large."] as const);
+    }, 60000);
+  });
+
+  const compressionPromise = asyncWrite(im, newPath)
     .then(async () => {
       const newMetadata = await getMetadata(newPath);
       if (!newMetadata) {
@@ -91,8 +99,11 @@ export const compressImage = async (opts: CompressImageOptions) => {
     })
     .catch((err) => {
       console.error("ImageMagick compression error:", err);
+      removeFile(newPath);
       return [null, "Something went wrong while compressing image."] as const;
     });
+
+  return Promise.race([compressionPromise, timeoutPromise]);
 };
 
 async function asyncWrite(im: gm.State, filename: string) {
